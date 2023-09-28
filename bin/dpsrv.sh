@@ -31,3 +31,33 @@ function dpsrv-down() {
 	done
 }
 
+function dpsrv-git-status() {
+	ls -1d $DPSRV_HOME/*/.git | while read dir; do
+		dir=${dir%.git}
+		cd $dir
+		echo "Checking ${PWD##*/}"
+		git status
+		cd $OLDPWD
+	done
+}
+
+function dpsrv-git-pull() {
+	ls -1d $DPSRV_HOME/*/.git | while read dir; do
+		dir=${dir%.git}
+		cd $dir
+		echo "Pulling ${PWD##*/}"
+		git pull
+		cd $OLDPWD
+	done
+}
+
+function dpsrv-git-push() {
+	ls -1d $DPSRV_HOME/*/.git | while read dir; do
+		dir=${dir%.git}
+		cd $dir
+		echo "Pushing ${PWD##*/}"
+		git commit -a -m updated && git push || true
+		cd $OLDPWD
+	done
+}
+
