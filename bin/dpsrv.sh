@@ -9,7 +9,7 @@ if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 fi
 
 function dpsrv-spotlight-off() {
-	sudo mdutil -a -i off
+	sudo mdutil -a -d -i off
 }
 
 function dpsrv-unlock-keychain() {
