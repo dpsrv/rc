@@ -12,11 +12,16 @@ function dpsrv-spotlight-off() {
 	sudo mdutil -a -d -i off
 }
 
+function dpsrv-show-keychain-info() {
+	 security -v  show-keychain-info $HOME/Library/Keychains/login.keychain-db
+}
+
 function dpsrv-unlock-keychain() {
-	security -v unlock-keychain $HOME/Library/Keychains/login.keychain-db
+	show-keychain-info || security -v unlock-keychain $HOME/Library/Keychains/login.keychain-db
 }
 
 function dpsrv-up() {
+	dpsrv-unlock-keychain
 	for service in "${DPSRV_SERVICES[@]}"; do
 		cd $DPSRV_HOME/$service
 		echo "Bringing up ${PWD##*/}"
