@@ -8,7 +8,11 @@ if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
 fi
 
-function dpsrv-unlocl() {
+function dpsrv-spotlight-off() {
+	sudo mdutil -a -i off
+}
+
+function dpsrv-unlock-keychain() {
 	security -v unlock-keychain $HOME/Library/Keychains/login.keychain-db
 }
 
