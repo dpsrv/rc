@@ -41,12 +41,13 @@ function dpsrv-down() {
 }
 
 function dpsrv-git-clone() {
-	repos=$(curl -s https://api.github.com/users/dpsrv/repos|jq -r '.[].name')
+	repos=$(curl -s https://api.github.com/orgs/dpsrv/repos|jq -r '.[].name')
 	cd $DPSRV_HOME
 	for repo in $repos; do
 		[ -d "$repo" ] && continue
 		git clone https://github.com/dpsrv/$repo.git
 	done
+	cd $OLDPWD
 }
 
 function dpsrv-git-status() {
