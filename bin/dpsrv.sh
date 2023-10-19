@@ -40,6 +40,15 @@ function dpsrv-down() {
 	done
 }
 
+function dpsrv-git-clone() {
+	repos=$(curl -s https://api.github.com/users/dpsrv/repos|jq -r '.[].name')
+	cd $DPSRV_HOME
+	for repo in $repos; do
+		[ -d "$repo" ] && continue
+		git clone https://github.com/dpsrv/$repo.git
+	done
+}
+
 function dpsrv-git-status() {
 	ls -1d $DPSRV_HOME/*/.git | while read dir; do
 		dir=${dir%.git}
