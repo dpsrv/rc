@@ -20,7 +20,8 @@ function dpsrv-unlock-keychain() {
 	show-keychain-info || security -v unlock-keychain $HOME/Library/Keychains/login.keychain-db
 }
 
-function dpsrv-up() {
+function dpsrv-up() {(
+	set -e
 	dpsrv-unlock-keychain
 	for service in "${DPSRV_SERVICES[@]}"; do
 		cd $DPSRV_HOME/$service
@@ -29,18 +30,20 @@ function dpsrv-up() {
 		echo "exit: $?"
 		cd $OLDPWD
 	done
-}
+)}
 
-function dpsrv-down() {
+function dpsrv-down() {(
+	set -e
 	for service in "${DPSRV_SERVICES[@]}"; do
 		cd $DPSRV_HOME/$service
 		echo "Tearing down ${PWD##*/}"
 		docker compose down
 		cd $OLDPWD
 	done
-}
+)}
 
-function dpsrv-git-clone() {
+function dpsrv-git-clone() {(
+	set -e
 	repos=$(curl -s https://api.github.com/orgs/dpsrv/repos|jq -r '.[].name')
 	cd $DPSRV_HOME
 	for repo in $repos; do
@@ -48,9 +51,10 @@ function dpsrv-git-clone() {
 		git clone https://github.com/dpsrv/$repo.git
 	done
 	cd $OLDPWD
-}
+)}
 
-function dpsrv-git-status() {
+function dpsrv-git-status() {(
+	set -e
 	ls -1d $DPSRV_HOME/*/.git | while read dir; do
 		dir=${dir%.git}
 		cd $dir
@@ -58,9 +62,10 @@ function dpsrv-git-status() {
 		git status
 		cd $OLDPWD
 	done
-}
+)}
 
-function dpsrv-git-pull() {
+function dpsrv-git-pull() {(
+	set -e
 	ls -1d $DPSRV_HOME/*/.git | while read dir; do
 		dir=${dir%.git}
 		cd $dir
@@ -68,9 +73,10 @@ function dpsrv-git-pull() {
 		git pull
 		cd $OLDPWD
 	done
-}
+)}
 
-function dpsrv-git-push() {
+function dpsrv-git-push() {(
+	set -e
 	ls -1d $DPSRV_HOME/*/.git | while read dir; do
 		dir=${dir%.git}
 		cd $dir
@@ -78,5 +84,5 @@ function dpsrv-git-push() {
 		git commit -a -m updated && git push || true
 		cd $OLDPWD
 	done
-}
+)}
 
