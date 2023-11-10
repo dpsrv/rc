@@ -8,12 +8,21 @@ if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
 fi
 
+function dpsrv-vm() {
+	if [ -z "$1" ]; then
+		echo "Usage: $FUNCNAME <vm> <command>"
+		echo "  e.g: $FUNCNAME docker reset"
+		return 1
+	fi
+	VBoxManage controlvm "$@" 
+}
+
 function dpsrv-spotlight-off() {
 	sudo mdutil -a -d -i off
 }
 
 function dpsrv-show-keychain-info() {
-	 security -v  show-keychain-info $HOME/Library/Keychains/login.keychain-db
+	 security -v show-keychain-info $HOME/Library/Keychains/login.keychain-db
 }
 
 function dpsrv-unlock-keychain() {
