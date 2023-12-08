@@ -51,6 +51,16 @@ function dpsrv-down() {(
 	done
 )}
 
+function dpsrv-build() {(
+	set -e
+	for service in "${DPSRV_SERVICES[@]}"; do
+		cd $DPSRV_HOME/$service
+		echo "Tearing down ${PWD##*/}"
+		docker compose build
+		cd $OLDPWD
+	done
+)}
+
 function dpsrv-git-clone() {(
 	set -e
 	repos=$(curl -s https://api.github.com/orgs/dpsrv/repos|jq -r '.[].name')
