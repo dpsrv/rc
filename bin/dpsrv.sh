@@ -100,7 +100,8 @@ function dpsrv-git-push() {(
 		dir=${dir%.git}
 		cd $dir
 		echo "Pushing ${PWD##*/}"
-		git commit -a -m updated && git push || true
+		git commit -a -m updated || true
+		git push || true
 		cd $OLDPWD
 	done
 )}
