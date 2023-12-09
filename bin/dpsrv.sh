@@ -106,3 +106,19 @@ function dpsrv-git-push() {(
 	done
 )}
 
+function dpsrv-openssl-cert() {
+	local dir=$DPSRV_HOME/rc/secrets/common
+
+	[ ! -f $dir/cert.pem ] || return
+	[ -d $dir ] || mkdir -p $dir
+
+	ipinfo=$( curl ipinfo.io )
+	
+	country=$( echo $ipinfo | jq -r .country )
+	state=$( echo $ipinfo | jq -r .region )
+	city=$( echo $ipinfo | jq -r .city )
+
+	openssl req -nodes -newkey rsa:2048 -keyout $dir/cert.key -out $dir/cert.crt -subj "/C=$country/ST=$state/L=$city/O=dpsrv/OU=dpsrv/CN=dpsrv.me"
+	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
+}
+
