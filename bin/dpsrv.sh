@@ -116,9 +116,15 @@ function dpsrv-git-push() {(
 )}
 
 function dpsrv-openssl-cert() {
-	local dir=$DPSRV_HOME/rc/secrets/common
+	if [ -z $1 ]; then
+		echo "Usage: $FUNCNAME <dir>"
+		echo "  e.g: $FUNCNAME mongo"
+		return 1
+	fi
 
-	#[ ! -f $dir/cert.pem ] || return
+	local dir=$DPSRV_HOME/rc/secrets/$1
+
+	[ ! -f $dir/cert.pem ] || return
 	[ -d $dir ] || mkdir -p $dir
 
 	ipinfo=$( curl ipinfo.io )
