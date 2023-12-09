@@ -17,6 +17,15 @@ function dpsrv-vm() {
 	VBoxManage controlvm "$@" 
 }
 
+function dpsrv-startvm() {
+	if [ -z "$1" ]; then
+		echo "Usage: $FUNCNAME <vm>"
+		echo "  e.g: $FUNCNAME docker"
+		return 1
+	fi
+	VBoxManage startvm --type headless "$@"
+}
+
 function dpsrv-spotlight-off() {
 	sudo mdutil -a -d -i off
 }
@@ -109,7 +118,7 @@ function dpsrv-git-push() {(
 function dpsrv-openssl-cert() {
 	local dir=$DPSRV_HOME/rc/secrets/common
 
-	[ ! -f $dir/cert.pem ] || return
+	#[ ! -f $dir/cert.pem ] || return
 	[ -d $dir ] || mkdir -p $dir
 
 	ipinfo=$( curl ipinfo.io )
@@ -118,7 +127,7 @@ function dpsrv-openssl-cert() {
 	state=$( echo $ipinfo | jq -r .region )
 	city=$( echo $ipinfo | jq -r .city )
 
-	openssl req -nodes -newkey rsa:2048 -keyout $dir/cert.key -out $dir/cert.crt -subj "/C=$country/ST=$state/L=$city/O=dpsrv/OU=dpsrv/CN=dpsrv.me"
+	openssl req -nodes -newkey rsa:2048 -new -x509 -days 3650 -keyout $dir/cert.key -out $dir/cert.crt -subj "/C=$country/ST=$state/L=$city/O=dpsrv/OU=dpsrv/CN=dpsrv.me"
 	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
 }
 
