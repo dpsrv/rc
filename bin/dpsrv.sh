@@ -148,3 +148,46 @@ function dpsrv-openssl-cert() {
 	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
 }
 
+function dpsrv-iptables-assign-port() {
+	local srcPort=$1
+	local dstPort=$2
+
+	if [ -z $dstPort ]; then
+    	echo "Usage: $FUNCNAME <src port> <dst port>"
+    	echo " e.g.: $FUNCNAME 80 50080"
+    	exit 1
+	fi
+
+	dpsrv-iptables-unassign-port $srcPort
+
+	local redirect="-t nat -p tcp --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$srcPort"
+	local accept="-A INPUT -m comment --comment dpsrv:redirect:port:$srcPort -p tcp -j ACCEPT --dport"
+
+	/sbin/iptables $accept $srcPort
+	/sbin/iptables $accept $dstPort
+	/sbin/iptables -A PREROUTING $redirect
+	/sbin/iptables -A OUTPUT -o lo $redirect
+}
+
+function dpsrv-iptables-unassign-port() {
+	local srcPort=$1
+
+	if [ -z $srcPort ]; then
+    	echo "Usage: $FUNCNAME <src port>"
+    	echo " e.g.: $FUNCNAME 80"
+    	exit 1
+	fi
+
+	comment="dpsrv:redirect:port:$srcPort"
+
+	/sbin/iptables-save | while read line; do
+    	if [[ $line =~ ^\*(.*) ]]; then
+        	table=${BASH_REMATCH[1]}
+        	continue
+    	fi
+    	command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
+    	[ -n "$command" ] || continue
+    	echo $command | xargs /sbin/iptables -t $table
+	done
+}
+
