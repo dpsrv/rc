@@ -151,17 +151,18 @@ function dpsrv-openssl-cert() {
 function dpsrv-iptables-assign-port() {
 	local srcPort=$1
 	local dstPort=$2
+	local portType=$3
 
 	if [ -z $dstPort ]; then
-    	echo "Usage: $FUNCNAME <src port> <dst port>"
-    	echo " e.g.: $FUNCNAME 80 50080"
-    	return 1
+		echo "Usage: $FUNCNAME <src port> <dst port> <port type>"
+		echo " e.g.: $FUNCNAME 80 50080 tcp"
+		return 1
 	fi
 
 	dpsrv-iptables-unassign-port $srcPort
 
-	local redirect="-t nat -p tcp --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$srcPort"
-	local accept="-A INPUT -m comment --comment dpsrv:redirect:port:$srcPort -p tcp -j ACCEPT --dport"
+	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$srcPort"
+	local accept="-A INPUT -m comment --comment dpsrv:redirect:port:$srcPort -p $portType -j ACCEPT --dport"
 
 	sudo /sbin/iptables $accept $srcPort
 	sudo /sbin/iptables $accept $dstPort
@@ -173,21 +174,21 @@ function dpsrv-iptables-unassign-port() {
 	local srcPort=$1
 
 	if [ -z $srcPort ]; then
-    	echo "Usage: $FUNCNAME <src port>"
-    	echo " e.g.: $FUNCNAME 80"
-    	return 1
+		echo "Usage: $FUNCNAME <src port>"
+		echo " e.g.: $FUNCNAME 80"
+		return 1
 	fi
 
 	comment="dpsrv:redirect:port:$srcPort"
 
 	sudo /sbin/iptables-save | while read line; do
-    	if [[ $line =~ ^\*(.*) ]]; then
-        	table=${BASH_REMATCH[1]}
-        	continue
-    	fi
-    	command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
-    	[ -n "$command" ] || continue
-    	echo $command | xargs sudo /sbin/iptables -t $table
+		if [[ $line =~ ^\*(.*) ]]; then
+			table=${BASH_REMATCH[1]}
+			continue
+		fi
+		command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
+		[ -n "$command" ] || continue
+		echo $command | xargs sudo /sbin/iptables -t $table
 	done
 }
 
@@ -195,6 +196,24 @@ function dpsrv-iptables-list-assigned-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
 	sudo /sbin/iptables-save | grep "$comment"
 }
+
+function dpsrv-activate() {(
+	set -ex
+	local svcName=$1
+
+	if [ -z $svcName ]; then
+		echo "Usage: $FUNCNAME <svc name>"
+		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
+		echo
+		echo "Services:"
+		docker ps --format json|jq -r .Names
+		return 1
+	fi
+
+	while read dst src type; do
+		dpsrv-iptables-assign-port $src $dst $type
+	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+)}
 
 function dpsrv-cp() {(
 	set -ex
