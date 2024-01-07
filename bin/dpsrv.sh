@@ -163,10 +163,10 @@ function dpsrv-iptables-assign-port() {
 	local redirect="-t nat -p tcp --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$srcPort"
 	local accept="-A INPUT -m comment --comment dpsrv:redirect:port:$srcPort -p tcp -j ACCEPT --dport"
 
-	/sbin/iptables $accept $srcPort
-	/sbin/iptables $accept $dstPort
-	/sbin/iptables -A PREROUTING $redirect
-	/sbin/iptables -A OUTPUT -o lo $redirect
+	sudo /sbin/iptables $accept $srcPort
+	sudo /sbin/iptables $accept $dstPort
+	sudo /sbin/iptables -A PREROUTING $redirect
+	sudo /sbin/iptables -A OUTPUT -o lo $redirect
 }
 
 function dpsrv-iptables-unassign-port() {
@@ -180,14 +180,14 @@ function dpsrv-iptables-unassign-port() {
 
 	comment="dpsrv:redirect:port:$srcPort"
 
-	/sbin/iptables-save | while read line; do
+	sudo /sbin/iptables-save | while read line; do
     	if [[ $line =~ ^\*(.*) ]]; then
         	table=${BASH_REMATCH[1]}
         	continue
     	fi
     	command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
     	[ -n "$command" ] || continue
-    	echo $command | xargs /sbin/iptables -t $table
+    	echo $command | xargs sudo /sbin/iptables -t $table
 	done
 }
 
