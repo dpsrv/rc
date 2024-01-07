@@ -222,6 +222,24 @@ function dpsrv-activate() {(
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
+function dpsrv-deactivate() {(
+	set -ex
+	local svcName=$1
+
+	if [ -z $svcName ]; then
+		echo "Usage: $FUNCNAME <svc name>"
+		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
+		echo
+		echo "Services:"
+		docker ps --format json|jq -r .Names
+		return 1
+	fi
+
+	while read dst src type; do
+		dpsrv-iptables-unassign-port $src $type
+	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+)}
+
 function dpsrv-cp() {(
 	set -ex
 	local image=$1
