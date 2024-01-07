@@ -148,7 +148,9 @@ function dpsrv-openssl-cert() {
 	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
 }
 
-function dpsrv-iptables-assign-port() {
+function dpsrv-iptables-assign-port() {(
+	set -ex
+
 	local srcPort=$1
 	local dstPort=$2
 	local portType=$3
@@ -161,17 +163,20 @@ function dpsrv-iptables-assign-port() {
 
 	dpsrv-iptables-unassign-port $srcPort
 
-	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$srcPort"
-	local accept="-A INPUT -m comment --comment dpsrv:redirect:port:$srcPort -p $portType -j ACCEPT --dport"
+	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$portType:$srcPort"
+	local accept="-A INPUT -p $portType -j ACCEPT --dport -m comment --comment dpsrv:redirect:port:$portType:$srcPort"
 
 	sudo /sbin/iptables $accept $srcPort
 	sudo /sbin/iptables $accept $dstPort
 	sudo /sbin/iptables -A PREROUTING $redirect
 	sudo /sbin/iptables -A OUTPUT -o lo $redirect
-}
+)}
 
-function dpsrv-iptables-unassign-port() {
+function dpsrv-iptables-unassign-port() {(
+	set -ex
+
 	local srcPort=$1
+	local portType=$2
 
 	if [ -z $srcPort ]; then
 		echo "Usage: $FUNCNAME <src port>"
@@ -179,7 +184,7 @@ function dpsrv-iptables-unassign-port() {
 		return 1
 	fi
 
-	comment="dpsrv:redirect:port:$srcPort"
+	comment="dpsrv:redirect:port:$portType:$srcPort"
 
 	sudo /sbin/iptables-save | while read line; do
 		if [[ $line =~ ^\*(.*) ]]; then
@@ -190,7 +195,7 @@ function dpsrv-iptables-unassign-port() {
 		[ -n "$command" ] || continue
 		echo $command | xargs sudo /sbin/iptables -t $table
 	done
-}
+)}
 
 function dpsrv-iptables-list-assigned-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
