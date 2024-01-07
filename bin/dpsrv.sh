@@ -196,3 +196,22 @@ function dpsrv-iptables-list-assigned-ports() {
 	sudo /sbin/iptables-save | grep "$comment"
 }
 
+function dpsrv-cp() {(
+	set -ex
+	local image=$1
+	local dest=$2
+
+	if [ -z $dest ]; then
+		echo "Usage: $FUNCNAME <image> <dest>"
+		echo
+		echo "Available images:"
+		docker image ls --format json|jq -r '.Repository + ":" + .Tag'
+		echo
+		echo "Available dest:"
+		ls -d1 $DPSRV_HOME/rc/secrets/local/*|sed 's#^.*/##g'
+		return 1 
+	fi
+
+	docker save $image | bzip2 | pv | ssh $dest 'bunzip2 | docker load'
+)}
+
