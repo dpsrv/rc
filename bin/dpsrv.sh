@@ -161,10 +161,12 @@ function dpsrv-iptables-assign-port() {(
 		return 1
 	fi
 
-	dpsrv-iptables-unassign-port $srcPort
+	dpsrv-iptables-unassign-port $srcPort $portType
 
-	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$portType:$srcPort"
-	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment dpsrv:redirect:port:$portType:$srcPort --dport"
+	local comment="dpsrv:redirect:port:$portType:$srcPort"
+
+	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment $comment --dport"
 
 	sudo /sbin/iptables $accept $srcPort
 	sudo /sbin/iptables $accept $dstPort
@@ -178,9 +180,9 @@ function dpsrv-iptables-unassign-port() {(
 	local srcPort=$1
 	local portType=$2
 
-	if [ -z $srcPort ]; then
-		echo "Usage: $FUNCNAME <src port>"
-		echo " e.g.: $FUNCNAME 80"
+	if [ -z $portType ]; then
+		echo "Usage: $FUNCNAME <src port> <port type>"
+		echo " e.g.: $FUNCNAME 80 tcp"
 		return 1
 	fi
 
