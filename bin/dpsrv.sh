@@ -115,6 +115,17 @@ function dpsrv-git-push() {(
 	done
 )}
 
+function dpsrv-git-init-secrets() {(
+	set -e
+	ls -1d $DPSRV_HOME/*/.gitattributes | while read dir; do
+		dir=${dir%.gitattributes}
+		cd $dir
+		echo "Init secrets ${PWD##*/}"
+		../git-openssl-secrets/git-init-openssl-secrets.sh
+		cd $OLDPWD
+	done
+)}
+
 function dpsrv-openssl-cert() {
 	if [ -z $1 ]; then
 		echo "Usage: $FUNCNAME <dir>"
