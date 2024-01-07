@@ -155,7 +155,7 @@ function dpsrv-iptables-assign-port() {
 	if [ -z $dstPort ]; then
     	echo "Usage: $FUNCNAME <src port> <dst port>"
     	echo " e.g.: $FUNCNAME 80 50080"
-    	exit 1
+    	return 1
 	fi
 
 	dpsrv-iptables-unassign-port $srcPort
@@ -175,7 +175,7 @@ function dpsrv-iptables-unassign-port() {
 	if [ -z $srcPort ]; then
     	echo "Usage: $FUNCNAME <src port>"
     	echo " e.g.: $FUNCNAME 80"
-    	exit 1
+    	return 1
 	fi
 
 	comment="dpsrv:redirect:port:$srcPort"
