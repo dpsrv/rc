@@ -191,3 +191,8 @@ function dpsrv-iptables-unassign-port() {
 	done
 }
 
+function dpsrv-iptables-list-assigned-ports() {
+	comment="dpsrv:redirect:port:$srcPort"
+	/sbin/iptables-save | grep "$comment"
+}
+
