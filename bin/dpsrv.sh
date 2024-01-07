@@ -164,7 +164,7 @@ function dpsrv-iptables-assign-port() {(
 	dpsrv-iptables-unassign-port $srcPort
 
 	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment dpsrv:redirect:port:$portType:$srcPort"
-	local accept="-A INPUT -p $portType -j ACCEPT --dport -m comment --comment dpsrv:redirect:port:$portType:$srcPort"
+	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment dpsrv:redirect:port:$portType:$srcPort --dport"
 
 	sudo /sbin/iptables $accept $srcPort
 	sudo /sbin/iptables $accept $dstPort
