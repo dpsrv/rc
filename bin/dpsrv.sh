@@ -115,6 +115,17 @@ function dpsrv-git-push() {(
 	done
 )}
 
+function dpsrv-git-init-secrets() {(
+	set -e
+	ls -1d $DPSRV_HOME/*/.gitattributes | while read dir; do
+		dir=${dir%.gitattributes}
+		cd $dir
+		echo "Init secrets ${PWD##*/}"
+		../git-openssl-secrets/git-init-openssl-secrets.sh
+		cd $OLDPWD
+	done
+)}
+
 function dpsrv-openssl-cert() {
 	if [ -z $1 ]; then
 		echo "Usage: $FUNCNAME <dir>"
@@ -136,4 +147,115 @@ function dpsrv-openssl-cert() {
 	openssl req -nodes -newkey rsa:2048 -new -x509 -days 3650 -keyout $dir/cert.key -out $dir/cert.crt -subj "/C=$country/ST=$state/L=$city/O=dpsrv/OU=dpsrv/CN=dpsrv.me"
 	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
 }
+
+function dpsrv-iptables-assign-port() {(
+	set -ex
+
+	local srcPort=$1
+	local dstPort=$2
+	local portType=$3
+
+	if [ -z $dstPort ]; then
+		echo "Usage: $FUNCNAME <src port> <dst port> <port type>"
+		echo " e.g.: $FUNCNAME 80 50080 tcp"
+		return 1
+	fi
+
+	dpsrv-iptables-unassign-port $srcPort $portType
+
+	local comment="dpsrv:redirect:port:$portType:$srcPort"
+
+	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment $comment --dport"
+
+	sudo /sbin/iptables $accept $srcPort
+	sudo /sbin/iptables $accept $dstPort
+	sudo /sbin/iptables -A PREROUTING $redirect
+	sudo /sbin/iptables -A OUTPUT -o lo $redirect
+)}
+
+function dpsrv-iptables-unassign-port() {(
+	set -ex
+
+	local srcPort=$1
+	local portType=$2
+
+	if [ -z $portType ]; then
+		echo "Usage: $FUNCNAME <src port> <port type>"
+		echo " e.g.: $FUNCNAME 80 tcp"
+		return 1
+	fi
+
+	comment="dpsrv:redirect:port:$portType:$srcPort"
+
+	sudo /sbin/iptables-save | while read line; do
+		if [[ $line =~ ^\*(.*) ]]; then
+			table=${BASH_REMATCH[1]}
+			continue
+		fi
+		command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
+		[ -n "$command" ] || continue
+		echo $command | xargs sudo /sbin/iptables -t $table
+	done
+)}
+
+function dpsrv-iptables-list-assigned-ports() {
+	comment="dpsrv:redirect:port:$srcPort"
+	sudo /sbin/iptables-save | grep "$comment"
+}
+
+function dpsrv-activate() {(
+	set -ex
+	local svcName=$1
+
+	if [ -z $svcName ]; then
+		echo "Usage: $FUNCNAME <svc name>"
+		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
+		echo
+		echo "Services:"
+		docker ps --format json|jq -r .Names
+		return 1
+	fi
+
+	while read dst src type; do
+		dpsrv-iptables-assign-port $src $dst $type
+	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+)}
+
+function dpsrv-deactivate() {(
+	set -ex
+	local svcName=$1
+
+	if [ -z $svcName ]; then
+		echo "Usage: $FUNCNAME <svc name>"
+		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
+		echo
+		echo "Services:"
+		docker ps --format json|jq -r .Names
+		return 1
+	fi
+
+	while read dst src type; do
+		dpsrv-iptables-unassign-port $src $type
+	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+)}
+
+function dpsrv-cp() {(
+	set -ex
+	local image=$1
+	local dest=$2
+
+	if [ -z $dest ]; then
+		echo "Usage: $FUNCNAME <image> <dest>"
+		echo
+		echo "Available images:"
+		docker image ls --format json|jq -r '.Repository + ":" + .Tag'
+		echo
+		echo "Available dest:"
+		ls -d1 $DPSRV_HOME/rc/secrets/local/*|sed 's#^.*/##g'
+		return 1 
+	fi
+
+	docker save $image | bzip2 | pv | ssh $dest 'bunzip2 | docker load'
+)}
 
