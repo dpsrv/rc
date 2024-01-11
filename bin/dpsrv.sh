@@ -149,7 +149,7 @@ function dpsrv-openssl-cert() {
 }
 
 function dpsrv-iptables-assign-port() {(
-	set -ex
+	set -e
 
 	local srcPort=$1
 	local dstPort=$2
@@ -168,10 +168,12 @@ function dpsrv-iptables-assign-port() {(
 	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
 	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment $comment --dport"
 
-	sudo /sbin/iptables $accept $srcPort
-	sudo /sbin/iptables $accept $dstPort
-	sudo /sbin/iptables -A PREROUTING $redirect
-	sudo /sbin/iptables -A OUTPUT -o lo $redirect
+	for iptables in iptables ip6tables; do
+		sudo /sbin/${iptables} $accept $srcPort
+		sudo /sbin/${iptables} $accept $dstPort
+		sudo /sbin/${iptables} -A PREROUTING $redirect
+		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
+	done
 )}
 
 function dpsrv-iptables-unassign-port() {(
@@ -188,20 +190,31 @@ function dpsrv-iptables-unassign-port() {(
 
 	comment="dpsrv:redirect:port:$portType:$srcPort"
 
-	sudo /sbin/iptables-save | while read line; do
-		if [[ $line =~ ^\*(.*) ]]; then
-			table=${BASH_REMATCH[1]}
-			continue
-		fi
-		command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
-		[ -n "$command" ] || continue
-		echo $command | xargs sudo /sbin/iptables -t $table
+	for iptables in iptables ip6tables; do
+		sudo /sbin/${iptables}-save | while read line; do
+			if [[ $line =~ ^\*(.*) ]]; then
+				table=${BASH_REMATCH[1]}
+				continue
+			fi
+			command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
+			[ -n "$command" ] || continue
+			echo $command | xargs sudo /sbin/${iptables} -t $table
+		done
 	done
 )}
 
+function dpsrv-iptables-save() {
+	for iptables in iptables ip6tables; do
+		sudo /sbin/${iptables}-save > /etc/sysconfig/${iptables}
+	done
+}
+
 function dpsrv-iptables-list-assigned-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
-	sudo /sbin/iptables-save | grep "$comment"
+
+	for iptables in iptables ip6tables; do
+		sudo /sbin/${iptables}-save | grep "$comment"
+	}
 }
 
 function dpsrv-activate() {(
