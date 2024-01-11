@@ -203,11 +203,13 @@ function dpsrv-iptables-unassign-port() {(
 	done
 )}
 
-function dpsrv-iptables-save() {
+function dpsrv-iptables-save() {(
+	set -e
+
 	for iptables in iptables ip6tables; do
-		sudo /sbin/${iptables}-save > /etc/sysconfig/${iptables}
+		sudo /sbin/${iptables}-save | sudo /usr/bin/tee /etc/sysconfig/${iptables} >/dev/null
 	done
-}
+)}
 
 function dpsrv-iptables-list-assigned-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
