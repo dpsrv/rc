@@ -177,7 +177,7 @@ function dpsrv-iptables-assign-port() {(
 )}
 
 function dpsrv-iptables-unassign-port() {(
-	set -ex
+	set -e
 
 	local srcPort=$1
 	local portType=$2
@@ -218,7 +218,7 @@ function dpsrv-iptables-list-assigned-ports() {
 }
 
 function dpsrv-activate() {(
-	set -ex
+	set -e
 	local svcName=$1
 
 	if [ -z $svcName ]; then
@@ -236,7 +236,7 @@ function dpsrv-activate() {(
 )}
 
 function dpsrv-deactivate() {(
-	set -ex
+	set -e
 	local svcName=$1
 
 	if [ -z $svcName ]; then
@@ -254,7 +254,7 @@ function dpsrv-deactivate() {(
 )}
 
 function dpsrv-cp() {(
-	set -ex
+	set -e
 	local image=$1
 	local dest=$2
 
