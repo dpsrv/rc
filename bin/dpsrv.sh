@@ -165,8 +165,8 @@ function dpsrv-iptables-assign-port() {(
 
 	local comment="dpsrv:redirect:port:$portType:$srcPort"
 
-	local redirect="-t nat -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
-	local accept="-A INPUT -p $portType -j ACCEPT -m comment --comment $comment --dport"
+	local redirect="-t nat -m $portType -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local accept="-A INPUT -m $portType -p $portType -j ACCEPT -m comment --comment $comment --dport"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables} $accept $srcPort
