@@ -214,7 +214,7 @@ function dpsrv-iptables-list-assigned-ports() {
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables}-save | grep "$comment"
-	}
+	done
 }
 
 function dpsrv-activate() {(
