@@ -152,29 +152,29 @@ function dpsrv-iptables-redirect-port() {(
 	set -e
 
 	local proto=$1
-	local srcPort=$2
-	local dstAddr=$3
-	local dstPort=$4
+	local dstPort=$2
+	local containerAddr=$3
+	local containerPort=$4
 
-	if [ -z $dstPort ]; then
-		echo "Usage: $FUNCNAME <protocol> <src port> <dst addr> <dst port>"
+	if [ -z $containerPort ]; then
+		echo "Usage: $FUNCNAME <protocol> <dst port> <container addr> <container port>"
 		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3 50080"
 		return 1
 	fi
 
-	dpsrv-iptables-clear-port $proto $srcPort
+	dpsrv-iptables-clear-port $proto $dstPort
 
-	local comment="dpsrv:redirect:port:$proto:$srcPort"
+	local comment="dpsrv:redirect:port:$proto:$dstPort"
 
-	local redirect="-t nat -p $proto --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local redirect="-t nat -p $proto --dport $dstPort -j REDIRECT --to-port $containerPort -m comment --comment $comment"
 	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
 
 	# No need to assign ip6, docker is not yet using it
 	for iptables in iptables; do
-		local srcAddr=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
-		local dnat="-t nat -s $srcAddr -p $proto --dport $srcPort -j DNAT --to-destination $dstAddr:$srcPort -m comment --comment $comment"
+		local dstAddr=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
+		local dnat="-t nat -d $dstAddr -p $proto --dport $dstPort -j DNAT --to-destination $containerAddr:$dstPort -m comment --comment $comment"
 
-		sudo /sbin/${iptables} $accept $srcPort
+		sudo /sbin/${iptables} $accept $dstPort
 		sudo /sbin/${iptables} -A PREROUTING $dnat
 		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
 	done
@@ -184,15 +184,15 @@ function dpsrv-iptables-clear-port() {(
 	set -e
 
 	local proto=$1
-	local srcPort=$2
+	local dstPort=$2
 
 	if [ -z $proto ]; then
-		echo "Usage: $FUNCNAME <proto> <src port>"
+		echo "Usage: $FUNCNAME <proto> <dst port>"
 		echo " e.g.: $FUNCNAME tcp 80"
 		return 1
 	fi
 
-	comment="dpsrv:redirect:port:$proto:$srcPort"
+	comment="dpsrv:redirect:port:$proto:$dstPort"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables}-save | while read line; do
@@ -216,7 +216,7 @@ function dpsrv-iptables-save() {(
 )}
 
 function dpsrv-iptables-list-ports() {
-	comment="dpsrv:redirect:port:$srcPort"
+	comment="dpsrv:redirect:port:$dstPort"
 
 	for iptables in iptables ip6tables; do
 		echo "# ${iptables}"
@@ -237,9 +237,9 @@ function dpsrv-activate() {(
 		return 1
 	fi
 
-	ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
-	while read dst src proto; do
-		dpsrv-iptables-redirect-port $proto $src $ip $dst
+	containerAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
+	while read containerPort dstPort proto; do
+		dpsrv-iptables-redirect-port $proto $dstPort $containerAddr $containerPort
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
@@ -256,8 +256,8 @@ function dpsrv-deactivate() {(
 		return 1
 	fi
 
-	while read dst src proto; do
-		dpsrv-iptables-clear-port $proto $src
+	while read containerPort dstPort proto; do
+		dpsrv-iptables-clear-port $proto $dstPort
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
