@@ -233,8 +233,8 @@ function dpsrv-activate() {(
 		return 1
 	fi
 
-	while read dst src type; do
-		dpsrv-iptables-assign-port $src $dst $type
+	while read dst src proto; do
+		dpsrv-iptables-assign-port $proto $src $dst
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
@@ -251,8 +251,8 @@ function dpsrv-deactivate() {(
 		return 1
 	fi
 
-	while read dst src type; do
-		dpsrv-iptables-unassign-port $src $type
+	while read dst src proto; do
+		dpsrv-iptables-unassign-port $proto $src
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
