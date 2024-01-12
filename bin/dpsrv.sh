@@ -166,12 +166,13 @@ function dpsrv-iptables-redirect-port() {(
 	local comment="dpsrv:redirect:port:$proto:$srcPort"
 
 	local redirect="-t nat -p $proto --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local dnat="-t nat -p $proto --dport $srcPort -j DNAT --to-destination 172.18.0.3:$srcPort -m comment --comment $comment"
 	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables} $accept $srcPort
 		sudo /sbin/${iptables} $accept $dstPort
-		sudo /sbin/${iptables} -A PREROUTING $redirect
+		sudo /sbin/${iptables} -A PREROUTING $dnat
 		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
 	done
 )}
