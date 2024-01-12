@@ -215,6 +215,7 @@ function dpsrv-iptables-list-assigned-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
 
 	for iptables in iptables ip6tables; do
+		echo "# ${iptables}"
 		sudo /sbin/${iptables}-save | grep "$comment"
 	done
 }
