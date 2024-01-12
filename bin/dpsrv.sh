@@ -161,7 +161,7 @@ function dpsrv-iptables-redirect-port() {(
 		return 1
 	fi
 
-	dpsrv-iptables-unredirect-port $proto $srcPort
+	dpsrv-iptables-clear-port $proto $srcPort
 
 	local comment="dpsrv:redirect:port:$proto:$srcPort"
 
@@ -176,7 +176,7 @@ function dpsrv-iptables-redirect-port() {(
 	done
 )}
 
-function dpsrv-iptables-unredirect-port() {(
+function dpsrv-iptables-clear-port() {(
 	set -e
 
 	local proto=$1
@@ -252,7 +252,7 @@ function dpsrv-deactivate() {(
 	fi
 
 	while read dst src proto; do
-		dpsrv-iptables-unredirect-port $proto $src
+		dpsrv-iptables-clear-port $proto $src
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
