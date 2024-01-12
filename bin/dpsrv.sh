@@ -151,22 +151,22 @@ function dpsrv-openssl-cert() {
 function dpsrv-iptables-assign-port() {(
 	set -e
 
-	local srcPort=$1
-	local dstPort=$2
-	local portType=$3
+	local proto=$1
+	local srcPort=$2
+	local dstPort=$3
 
 	if [ -z $dstPort ]; then
-		echo "Usage: $FUNCNAME <src port> <dst port> <port type>"
-		echo " e.g.: $FUNCNAME 80 50080 tcp"
+		echo "Usage: $FUNCNAME <protocol> <src port> <dst port>"
+		echo " e.g.: $FUNCNAME tcp 80 50080"
 		return 1
 	fi
 
-	dpsrv-iptables-unassign-port $srcPort $portType
+	dpsrv-iptables-unassign-port $proto $srcPort
 
-	local comment="dpsrv:redirect:port:$portType:$srcPort"
+	local comment="dpsrv:redirect:port:$proto:$srcPort"
 
-	local redirect="-t nat -m $portType -p $portType --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
-	local accept="-A INPUT -m $portType -p $portType -j ACCEPT -m comment --comment $comment --dport"
+	local redirect="-t nat -p $proto --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
+	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables} $accept $srcPort
@@ -179,16 +179,16 @@ function dpsrv-iptables-assign-port() {(
 function dpsrv-iptables-unassign-port() {(
 	set -e
 
-	local srcPort=$1
-	local portType=$2
+	local proto=$1
+	local srcPort=$2
 
-	if [ -z $portType ]; then
-		echo "Usage: $FUNCNAME <src port> <port type>"
-		echo " e.g.: $FUNCNAME 80 tcp"
+	if [ -z $proto ]; then
+		echo "Usage: $FUNCNAME <proto> <src port>"
+		echo " e.g.: $FUNCNAME tcp 80"
 		return 1
 	fi
 
-	comment="dpsrv:redirect:port:$portType:$srcPort"
+	comment="dpsrv:redirect:port:$proto:$srcPort"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables}-save | while read line; do
