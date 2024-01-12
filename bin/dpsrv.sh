@@ -148,7 +148,7 @@ function dpsrv-openssl-cert() {
 	cat $dir/cert.key $dir/cert.crt > $dir/cert.pem
 }
 
-function dpsrv-iptables-assign-port() {(
+function dpsrv-iptables-redirect-port() {(
 	set -e
 
 	local proto=$1
@@ -161,7 +161,7 @@ function dpsrv-iptables-assign-port() {(
 		return 1
 	fi
 
-	dpsrv-iptables-unassign-port $proto $srcPort
+	dpsrv-iptables-unredirect-port $proto $srcPort
 
 	local comment="dpsrv:redirect:port:$proto:$srcPort"
 
@@ -176,7 +176,7 @@ function dpsrv-iptables-assign-port() {(
 	done
 )}
 
-function dpsrv-iptables-unassign-port() {(
+function dpsrv-iptables-unredirect-port() {(
 	set -e
 
 	local proto=$1
@@ -211,7 +211,7 @@ function dpsrv-iptables-save() {(
 	done
 )}
 
-function dpsrv-iptables-list-assigned-ports() {
+function dpsrv-iptables-list-ports() {
 	comment="dpsrv:redirect:port:$srcPort"
 
 	for iptables in iptables ip6tables; do
@@ -234,7 +234,7 @@ function dpsrv-activate() {(
 	fi
 
 	while read dst src proto; do
-		dpsrv-iptables-assign-port $proto $src $dst
+		dpsrv-iptables-redirect-port $proto $src $dst
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
@@ -252,7 +252,7 @@ function dpsrv-deactivate() {(
 	fi
 
 	while read dst src proto; do
-		dpsrv-iptables-unassign-port $proto $src
+		dpsrv-iptables-unredirect-port $proto $src
 	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
