@@ -171,11 +171,10 @@ function dpsrv-iptables-redirect-port() {(
 
 	# No need to assign ip6, docker is not yet using it
 	for iptables in iptables; do
-		local srcAddr=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ',')
+		local srcAddr=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
 		local dnat="-t nat -s $srcAddr -p $proto --dport $srcPort -j DNAT --to-destination $dstAddr:$srcPort -m comment --comment $comment"
 
 		sudo /sbin/${iptables} $accept $srcPort
-		sudo /sbin/${iptables} $accept $dstPort
 		sudo /sbin/${iptables} -A PREROUTING $dnat
 		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
 	done
