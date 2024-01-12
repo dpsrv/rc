@@ -176,7 +176,7 @@ function dpsrv-iptables-redirect-port() {(
 
 		sudo /sbin/${iptables} $accept $dstPort
 		sudo /sbin/${iptables} -A PREROUTING $dnat
-		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
+		sudo /sbin/${iptables} -A OUTPUT -o lo $dnat
 	done
 )}
 
