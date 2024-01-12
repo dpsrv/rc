@@ -176,7 +176,8 @@ function dpsrv-iptables-forward-port() {(
 	# No need to assign ip6, docker is not yet using it
 	# When adding ip6, remember to use dstAddr4 
 	for iptables in iptables ip6tables; do
-		dstAddr=${!dstAddr_$iptables}
+		dstAddrName=dstAddr_$iptables
+		dstAddr=${!dstAddrName}
 
 		[ -n $dstAddr ] || continue
 
