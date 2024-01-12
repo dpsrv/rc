@@ -153,11 +153,12 @@ function dpsrv-iptables-redirect-port() {(
 
 	local proto=$1
 	local srcPort=$2
-	local dstPort=$3
+	local dstAddr=$3
+	local dstPort=$4
 
 	if [ -z $dstPort ]; then
-		echo "Usage: $FUNCNAME <protocol> <src port> <dst port>"
-		echo " e.g.: $FUNCNAME tcp 80 50080"
+		echo "Usage: $FUNCNAME <protocol> <src port> <dst addr> <dst port>"
+		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3 50080"
 		return 1
 	fi
 
@@ -166,7 +167,7 @@ function dpsrv-iptables-redirect-port() {(
 	local comment="dpsrv:redirect:port:$proto:$srcPort"
 
 	local redirect="-t nat -p $proto --dport $srcPort -j REDIRECT --to-port $dstPort -m comment --comment $comment"
-	local dnat="-t nat -p $proto --dport $srcPort -j DNAT --to-destination 172.18.0.3:$srcPort -m comment --comment $comment"
+	local dnat="-t nat -p $proto --dport $srcPort -j DNAT --to-destination $dstAddr:$srcPort -m comment --comment $comment"
 	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
 
 	for iptables in iptables ip6tables; do
@@ -223,9 +224,9 @@ function dpsrv-iptables-list-ports() {
 
 function dpsrv-activate() {(
 	set -e
-	local svcName=$1
+	local containerName=$1
 
-	if [ -z $svcName ]; then
+	if [ -z $containerName ]; then
 		echo "Usage: $FUNCNAME <svc name>"
 		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
 		echo
@@ -234,16 +235,17 @@ function dpsrv-activate() {(
 		return 1
 	fi
 
+	ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
 	while read dst src proto; do
-		dpsrv-iptables-redirect-port $proto $src $dst
-	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+		dpsrv-iptables-redirect-port $proto $src $ip $dst
+	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
 function dpsrv-deactivate() {(
 	set -e
-	local svcName=$1
+	local containerName=$1
 
-	if [ -z $svcName ]; then
+	if [ -z $containerName ]; then
 		echo "Usage: $FUNCNAME <svc name>"
 		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
 		echo
@@ -254,7 +256,7 @@ function dpsrv-deactivate() {(
 
 	while read dst src proto; do
 		dpsrv-iptables-clear-port $proto $src
-	done < <(docker ps -f name=$svcName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
 function dpsrv-cp() {(
