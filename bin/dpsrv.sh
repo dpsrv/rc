@@ -166,10 +166,10 @@ function dpsrv-iptables-forward-port() {(
 
 	local comment="dpsrv:forward:port:$proto:$dstPort"
 
-	local redirect="-t nat -p $proto --dport $dstPort -j REDIRECT --to-port $containerPort -m comment --comment $comment"
 	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
 
 	local dnat="-t nat -p $proto --dport $dstPort -j DNAT --to-destination $containerAddr:$dstPort -m comment --comment $comment"
+
 	local dstAddr_iptables=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
 	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
 
@@ -185,13 +185,11 @@ function dpsrv-iptables-forward-port() {(
 		sudo /sbin/${iptables} $accept $dstPort
 
 		# DNAT external traffic
-		sudo /sbin/${iptables} -A PREROUTING $dnat
+		sudo /sbin/${iptables} -A PREROUTING -d $dstAddr $dnat
 
 		# DNAT internal traffic
-		sudo /sbin/${iptables} -A OUTPUT -d $dstAddr $dnat
+		sudo /sbin/${iptables} -A OUTPUT -d 127.0.0.1,$dstAddr $dnat
 
-		# Redirect local traffic
-		sudo /sbin/${iptables} -A OUTPUT -o lo $redirect
 	done
 )}
 
