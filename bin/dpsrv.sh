@@ -3,6 +3,7 @@ export DPSRV_HOME=$PWD
 cd $OLDPWD
 
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
+export DPSRV_SERVICES_UP=( scheduler bind mongo )
 
 if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
@@ -41,7 +42,7 @@ function dpsrv-unlock-keychain() {
 function dpsrv-up() {(
 	set -e
 	dpsrv-unlock-keychain
-	for service in "${DPSRV_SERVICES[@]}"; do
+	for service in "${DPSRV_SERVICES_UP[@]}"; do
 		cd $DPSRV_HOME/$service
 		echo "Bringing up ${PWD##*/}"
 		docker compose up --build -d
