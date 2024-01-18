@@ -1,0 +1,7 @@
+[sshd]
+enabled = true
+port = ssh
+action = iptables-multiport
+backend = systemd
+maxretry = 3
+bantime = 600
