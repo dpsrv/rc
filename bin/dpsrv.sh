@@ -3,7 +3,7 @@ export DPSRV_HOME=$PWD
 cd $OLDPWD
 
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
-export DPSRV_SERVICES_UP=( scheduler bind mongo )
+export DPSRV_SERVICES_UP=( scheduler bind nginx mongo )
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
 
