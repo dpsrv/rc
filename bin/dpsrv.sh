@@ -131,7 +131,7 @@ function dpsrv-git-init-secrets() {(
 )}
 
 function dpsrv-openssl-cert() {
-	if [ -z $1 ]; then
+	if [ -z "$1" ]; then
 		echo "Usage: $FUNCNAME <dir>"
 		echo "  e.g: $FUNCNAME mongo"
 		return 1
@@ -160,7 +160,7 @@ function dpsrv-iptables-forward-port() {(
 	local toAddr_iptables=$3
 	local toAddr_iptables6=$4
 
-	if [ -z $toAddr_iptables ]; then
+	if [ -z "$toAddr_iptables" ]; then
 		echo "Usage: $FUNCNAME <protocol> <port> <container ipv4> [container ipv6]"
 		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3"
 		return 1
@@ -188,8 +188,8 @@ function dpsrv-iptables-forward-port() {(
 		toAddrName=toAddr_$iptables
 		toAddr=${!toAddrName}
 
-		[ -n $dstAddr ] || continue
-		[ -n $toAddr ] || continue
+		[ -n "$dstAddr" ] || continue
+		[ -n "$toAddr" ] || continue
 
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
 
@@ -211,7 +211,7 @@ function dpsrv-iptables-clear-port() {(
 	local proto=$1
 	local dport=$2
 
-	if [ -z $proto ]; then
+	if [ -z "$proto" ]; then
 		echo "Usage: $FUNCNAME <proto> <dst port>"
 		echo " e.g.: $FUNCNAME tcp 80"
 		return 1
@@ -253,7 +253,7 @@ function dpsrv-activate() {(
 	set -e
 	local containerName=$1
 
-	if [ -z $containerName ]; then
+	if [ -z "$containerName" ]; then
 		echo "Usage: $FUNCNAME <svc name>"
 		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
 		echo
@@ -272,7 +272,7 @@ function dpsrv-deactivate() {(
 	set -e
 	local containerName=$1
 
-	if [ -z $containerName ]; then
+	if [ -z "$containerName" ]; then
 		echo "Usage: $FUNCNAME <svc name>"
 		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
 		echo
@@ -291,7 +291,7 @@ function dpsrv-cp() {(
 	local image=$1
 	local dest=$2
 
-	if [ -z $dest ]; then
+	if [ -z "$dest" ]; then
 		echo "Usage: $FUNCNAME <image> <dest>"
 		echo
 		echo "Available images:"
