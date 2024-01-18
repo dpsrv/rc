@@ -36,6 +36,7 @@ function dpsrv-show-keychain-info() {
 }
 
 function dpsrv-unlock-keychain() {
+	[ -x security ] || return 
 	show-keychain-info || security -v unlock-keychain $HOME/Library/Keychains/login.keychain-db
 }
 
