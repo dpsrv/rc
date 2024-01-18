@@ -152,43 +152,51 @@ function dpsrv-iptables-forward-port() {(
 	set -e
 
 	local proto=$1
-	local dstPort=$2
-	local containerAddr=$3
-	local containerPort=$4
+	local dport=$2
+	local toAddr_iptables=$3
+	local toAddr_iptables6=$4
 
-	if [ -z $containerPort ]; then
-		echo "Usage: $FUNCNAME <protocol> <dst port> <container addr> <container port>"
-		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3 50080"
+	if [ -z $toAddr_iptables ]; then
+		echo "Usage: $FUNCNAME <protocol> <port> <container ipv4> [container ipv6]"
+		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3"
 		return 1
 	fi
 
-	dpsrv-iptables-clear-port $proto $dstPort
+	dpsrv-iptables-clear-port $proto $dport
 
-	local comment="dpsrv:forward:port:$proto:$dstPort"
+	local comment="dpsrv:forward:port:$proto:$dport"
 
-	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport"
+	local accept="-A INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 
-	local dnat="-t nat -p $proto --dport $dstPort -j DNAT --to-destination $containerAddr:$dstPort -m comment --comment $comment"
+	local localAddr_iptables=127.0.0.1
+	local localAddr_ip6tables=::1
 
 	local dstAddr_iptables=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
 	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
 
-	# No need to assign ip6, docker is not yet using it
-	# When adding ip6, remember to use dstAddr4 
 	for iptables in iptables ip6tables; do
+		localAddrName=localAddr_$iptables
+		localAddr=${!localAddrName}
+
 		dstAddrName=dstAddr_$iptables
 		dstAddr=${!dstAddrName}
 
-		[ -n $dstAddr ] || continue
+		toAddrName=toAddr_$iptables
+		toAddr=${!toAddrName}
 
-		# Accept connections on port $dstPort
-		sudo /sbin/${iptables} $accept $dstPort
+		[ -n $dstAddr ] || continue
+		[ -n $toAddr ] || continue
+
+		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
+
+		# Accept connections on port $dport
+		sudo /sbin/${iptables} $accept $dport
 
 		# DNAT external traffic
 		sudo /sbin/${iptables} -A PREROUTING -d $dstAddr $dnat
 
 		# DNAT internal traffic
-		sudo /sbin/${iptables} -A OUTPUT -d 127.0.0.1,$dstAddr $dnat
+		sudo /sbin/${iptables} -A OUTPUT -d $localAddr,$dstAddr $dnat
 
 	done
 )}
@@ -197,7 +205,7 @@ function dpsrv-iptables-clear-port() {(
 	set -e
 
 	local proto=$1
-	local dstPort=$2
+	local dport=$2
 
 	if [ -z $proto ]; then
 		echo "Usage: $FUNCNAME <proto> <dst port>"
@@ -205,7 +213,7 @@ function dpsrv-iptables-clear-port() {(
 		return 1
 	fi
 
-	comment="dpsrv:forward:port:$proto:$dstPort"
+	comment="dpsrv:forward:port:$proto:$dport"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables}-save | while read line; do
@@ -229,7 +237,7 @@ function dpsrv-iptables-save() {(
 )}
 
 function dpsrv-iptables-list-ports() {
-	comment="dpsrv:forward:port:$dstPort"
+	comment="dpsrv:forward:port:$dport"
 
 	for iptables in iptables ip6tables; do
 		echo "# ${iptables}"
@@ -250,9 +258,9 @@ function dpsrv-activate() {(
 		return 1
 	fi
 
-	containerAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
-	while read containerPort dstPort proto; do
-		dpsrv-iptables-forward-port $proto $dstPort $containerAddr $containerPort
+	toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
+	while read containerPort dport proto; do
+		dpsrv-iptables-forward-port $proto $dport $toAddr 
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
@@ -269,8 +277,8 @@ function dpsrv-deactivate() {(
 		return 1
 	fi
 
-	while read containerPort dstPort proto; do
-		dpsrv-iptables-clear-port $proto $dstPort
+	while read containerPort dport proto; do
+		dpsrv-iptables-clear-port $proto $dport
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
