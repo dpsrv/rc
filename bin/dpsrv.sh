@@ -5,6 +5,8 @@ cd $OLDPWD
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
 export DPSRV_SERVICES_UP=( scheduler bind mongo )
 
+export HOSTNAME=${HOSTNAME:-$(hostname)}
+
 if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
 fi
