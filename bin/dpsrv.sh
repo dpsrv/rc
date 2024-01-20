@@ -202,7 +202,7 @@ function dpsrv-iptables-forward-port() {(
 		sudo /sbin/${iptables} $accept
 
 		# DNAT external traffic
-		sudo /sbin/${iptables} -I PREROUTING ! -i $brideIF -d $dstAddr $dnat
+		sudo /sbin/${iptables} -I PREROUTING -d $dstAddr $dnat
 
 		# DNAT internal traffic
 		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,$dstAddr $dnat
