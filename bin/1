@@ -1,4 +1,0 @@
-dpsrv/mongo latest dpsrv-mongo-latest 172.18.0.5 
-dpsrv/nginx latest dpsrv-nginx-latest 172.18.0.4 
-dpsrv/bind latest dpsrv-bind-latest 172.18.0.3 
-dpsrv/scheduler latest dpsrv-scheduler-latest 172.18.0.2 
