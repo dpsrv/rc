@@ -264,6 +264,7 @@ function dpsrv-activate() {(
 
 	toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
 	while read containerPort dport proto; do
+		[ -n "$containerPort" ] || continue
 		dpsrv-iptables-forward-port $proto $dport $toAddr 
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
