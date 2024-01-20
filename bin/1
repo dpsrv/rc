@@ -1,0 +1,12 @@
+dpsrv/mongo latest dpsrv-mongo-latest 172.18.0.5 -A PREROUTING -d 5.161.71.5/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A PREROUTING -d 5.161.18.3/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A PREROUTING -d 172.17.0.1/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A PREROUTING -d 172.18.0.1/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A OUTPUT -d 127.0.0.1/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A OUTPUT -d 5.161.71.5/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A OUTPUT -d 5.161.18.3/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A OUTPUT -d 172.17.0.1/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+-A OUTPUT -d 172.18.0.1/32 -p tcp -m tcp --dport 27017 -m comment --comment "dpsrv:forward:port:tcp:27017" -j DNAT --to-destination 172.18.0.5:27017
+dpsrv/nginx latest dpsrv-nginx-latest 172.18.0.4 
+dpsrv/bind latest dpsrv-bind-latest 172.18.0.3 
+dpsrv/scheduler latest dpsrv-scheduler-latest 172.18.0.2 
