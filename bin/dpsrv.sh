@@ -180,7 +180,7 @@ function dpsrv-iptables-forward-port() {(
 	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
 
 	local bridgeIP=$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
-	local brideIF=$(ip -json address show to "$toAddr/32" | jq -r '.[].ifname')
+	local brideIF=$(ip -json address show to "$bridgeIP/32" | jq -r '.[].ifname')
 
 	for iptables in iptables ip6tables; do
 		local localAddrName=localAddr_$iptables
