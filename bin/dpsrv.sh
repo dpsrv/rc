@@ -303,9 +303,16 @@ function dpsrv-list() {(
 
 function dpsrv-latest() {(
 	local list=$(dpsrv-list)
-	local images=$(echo "$list" | cut -d" " -f1|sort -fu)
+	local images=$(echo "$list" | cut -d" " -f1 | sort -fu)
 	for image in $images; do
 		echo "$list"|grep ^$image|sort|tail -1
+	done
+)}
+
+function dpsrv-activate-latest() {(
+	local containerNames=$(dpsrv-latest | cut -d" " -f3 | sort -fu)
+	for containerName in $containerNames; do
+		dpsrv-activate $containerName
 	done
 )}
 
