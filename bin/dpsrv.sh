@@ -195,7 +195,7 @@ function dpsrv-iptables-forward-port() {(
 		[ -n "$dstAddr" ] || continue
 		[ -n "$toAddr" ] || continue
 
-		local dnat="-t nat -i ! $brideIF -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
+		local dnat="-t nat ! -i $brideIF -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
 		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $cport -m comment --comment $comment"
 
 		# Accept connections on port $dport
