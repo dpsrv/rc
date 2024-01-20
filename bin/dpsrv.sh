@@ -296,7 +296,7 @@ function dpsrv-list() {(
 		local imageVersion=$(echo "$image"|cut -d: -f2)
 		local toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
 		local activePorts=$(echo "$iptables_ports" | grep $toAddr)
-		local active=$( echo "$activePorts" | grep -q $toAddr )
+		local active=$( echo "$activePorts" | grep -q $toAddr && echo active )
 		echo "$imageName $imageVersion $containerName $toAddr $active"
 	done
 )}
