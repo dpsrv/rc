@@ -156,13 +156,14 @@ function dpsrv-iptables-forward-port() {(
 	set -e
 
 	local proto=$1
-	local dport=$2
-	local toAddr_iptables=$3
-	local toAddr_iptables6=$4
+	local cport=$2
+	local dport=$3
+	local toAddr_iptables=$4
+	local toAddr_iptables6=$5
 
 	if [ -z "$toAddr_iptables" ]; then
-		echo "Usage: $FUNCNAME <protocol> <port> <container ipv4> [container ipv6]"
-		echo " e.g.: $FUNCNAME tcp 80 172.18.0.3"
+		echo "Usage: $FUNCNAME <protocol> <cport> <dport> <container ipv4> [container ipv6]"
+		echo " e.g.: $FUNCNAME tcp 50080 80 172.18.0.3"
 		return 1
 	fi
 
@@ -192,6 +193,7 @@ function dpsrv-iptables-forward-port() {(
 		[ -n "$toAddr" ] || continue
 
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
+		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $containerPort -m comment --comment $comment"
 
 		# Accept connections on port $dport
 		sudo /sbin/${iptables} $accept
@@ -263,9 +265,9 @@ function dpsrv-activate() {(
 	fi
 
 	local toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
-	while read containerPort dport proto; do
-		[ -n "$containerPort" ] || continue
-		dpsrv-iptables-forward-port $proto $dport $toAddr 
+	while read cport dport proto; do
+		[ -n "$cport" ] || continue
+		dpsrv-iptables-forward-port $proto $cport $dport $toAddr 
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
