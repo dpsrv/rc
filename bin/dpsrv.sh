@@ -192,6 +192,8 @@ function dpsrv-iptables-forward-port() {(
 		[ -n "$dstAddr" ] || continue
 		[ -n "$toAddr" ] || continue
 
+		local bif=$(ip -json address show to "$toAddr/32" | jq -r '.[].ifname')
+
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
 		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $cport -m comment --comment $comment"
 
