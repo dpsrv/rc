@@ -301,6 +301,14 @@ function dpsrv-list() {(
 	done
 )}
 
+function dpsrv-latest() {(
+	local list=$(dpsrv-list)
+	local images=$(echo "$list" | cut -d" " -f1|sort -fu)
+	for image in $images; do
+		echo "$list"|grep ^$image|sort|tail -1
+	done
+)}
+
 function dpsrv-cp() {(
 	set -e
 	local image=$1
