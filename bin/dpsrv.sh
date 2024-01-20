@@ -179,6 +179,9 @@ function dpsrv-iptables-forward-port() {(
 	local dstAddr_iptables=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
 	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
 
+	local bridgeIP=$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
+	local brideIF=$(ip -json address show to "$toAddr/32" | jq -r '.[].ifname')
+
 	for iptables in iptables ip6tables; do
 		local localAddrName=localAddr_$iptables
 		local localAddr=${!localAddrName}
@@ -192,9 +195,7 @@ function dpsrv-iptables-forward-port() {(
 		[ -n "$dstAddr" ] || continue
 		[ -n "$toAddr" ] || continue
 
-		local bif=$(ip -json address show to "$toAddr/32" | jq -r '.[].ifname')
-
-		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
+		local dnat="-t nat ! -i $brideIF -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
 		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $cport -m comment --comment $comment"
 
 		# Accept connections on port $dport
