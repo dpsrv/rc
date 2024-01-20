@@ -179,14 +179,14 @@ function dpsrv-iptables-forward-port() {(
 	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
 
 	for iptables in iptables ip6tables; do
-		localAddrName=localAddr_$iptables
-		localAddr=${!localAddrName}
+		local localAddrName=localAddr_$iptables
+		local localAddr=${!localAddrName}
 
-		dstAddrName=dstAddr_$iptables
-		dstAddr=${!dstAddrName}
+		local dstAddrName=dstAddr_$iptables
+		local dstAddr=${!dstAddrName}
 
-		toAddrName=toAddr_$iptables
-		toAddr=${!toAddrName}
+		local toAddrName=toAddr_$iptables
+		local toAddr=${!toAddrName}
 
 		[ -n "$dstAddr" ] || continue
 		[ -n "$toAddr" ] || continue
@@ -217,15 +217,15 @@ function dpsrv-iptables-clear-port() {(
 		return 1
 	fi
 
-	comment="dpsrv:forward:port:$proto:$dport"
+	local comment="dpsrv:forward:port:$proto:$dport"
 
 	for iptables in iptables ip6tables; do
 		sudo /sbin/${iptables}-save | while read line; do
 			if [[ $line =~ ^\*(.*) ]]; then
-				table=${BASH_REMATCH[1]}
+				local table=${BASH_REMATCH[1]}
 				continue
 			fi
-			command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
+			local command=$(echo "$line" | grep -- "$comment" | sed 's/^-A/-D/g')
 			[ -n "$command" ] || continue
 			echo $command | xargs sudo /sbin/${iptables} -t $table
 		done
@@ -241,7 +241,7 @@ function dpsrv-iptables-save() {(
 )}
 
 function dpsrv-iptables-list-ports() {
-	comment="dpsrv:forward:port:$dport"
+	local comment="dpsrv:forward:port:$dport"
 
 	for iptables in iptables ip6tables; do
 		echo "# ${iptables}"
@@ -262,7 +262,7 @@ function dpsrv-activate() {(
 		return 1
 	fi
 
-	toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
+	local toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
 	while read containerPort dport proto; do
 		[ -n "$containerPort" ] || continue
 		dpsrv-iptables-forward-port $proto $dport $toAddr 
@@ -285,6 +285,19 @@ function dpsrv-deactivate() {(
 	while read containerPort dport proto; do
 		dpsrv-iptables-clear-port $proto $dport
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+)}
+
+function dpsrv-list() {(
+	set -e
+	local images=$(docker ps --format '{{.Names}} {{.Image}}')
+	local iptables_ports=$(dpsrv-iptables-list-ports)
+	echo "$images" | while read containerName image; do
+		local imageName=$(echo "$image"|cut -d: -f1)
+		local imageVersion=$(echo "$image"|cut -d: -f2)
+		local toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
+		local activeAddr=$(echo "$iptables_rules"|grep $toAddr)
+		echo "$imageName $imageVersion $containerName $toAddr $activeAddr"
+	done
 )}
 
 function dpsrv-cp() {(
