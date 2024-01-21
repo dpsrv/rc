@@ -200,8 +200,9 @@ function dpsrv-iptables-forward-port() {(
 
 		# Accept connections on port $dport
 		sudo /sbin/${iptables} -I INPUT $accept
-		sudo /sbin/${iptables} -I FORWARD $accept
-		sudo /sbin/${iptables} -I OUTPUT $accept
+		sudo /sbin/${iptables} -i lo -I INPUT $accept
+		#sudo /sbin/${iptables} -I FORWARD $accept
+		#sudo /sbin/${iptables} -I OUTPUT $accept
 
 		# DNAT external traffic
 		sudo /sbin/${iptables} -I PREROUTING -d $dstAddr $dnat
