@@ -265,12 +265,12 @@ function dpsrv-iptables-debug() {
 		line=
 	fi
 
-	/sbin/iptables -$action INPUT $line -j LOG
-	/sbin/iptables -$action FORWARD $line -j LOG
-	/sbin/iptables -$action OUTPUT $line -j LOG
-	/sbin/iptables -t nat -$action PREROUTING $line -j LOG
-	/sbin/iptables -t nat -$action POSTROUTING $line -j LOG
-	/sbin/iptables -t nat -$action OUTPUT $line -j LOG
+	sudo /sbin/iptables -$action INPUT $line -j LOG
+	sudo /sbin/iptables -$action FORWARD $line -j LOG
+	sudo /sbin/iptables -$action OUTPUT $line -j LOG
+	sudo /sbin/iptables -t nat -$action PREROUTING $line -j LOG
+	sudo /sbin/iptables -t nat -$action POSTROUTING $line -j LOG
+	sudo /sbin/iptables -t nat -$action OUTPUT $line -j LOG
 }
 
 
