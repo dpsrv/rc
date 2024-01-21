@@ -260,7 +260,7 @@ function dpsrv-iptables-list-ports() {
 function dpsrv-iptables-debug() {
 	local action=I
 	local line=1
-	if [ $1 = "off" ]; then
+	if [ "$1" = "off" ]; then
 		action=D
 		line=
 	fi
