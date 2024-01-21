@@ -171,7 +171,7 @@ function dpsrv-iptables-forward-port() {(
 
 	local comment="dpsrv:forward:port:$proto:$dport"
 
-	local accept="-I INPUT -p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
+	local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 
 	local localAddr_iptables=127.0.0.1
 	local localAddr_ip6tables=::1
@@ -199,7 +199,9 @@ function dpsrv-iptables-forward-port() {(
 		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $cport -m comment --comment $comment"
 
 		# Accept connections on port $dport
-		sudo /sbin/${iptables} $accept
+		sudo /sbin/${iptables} -I INPUT $accept
+		sudo /sbin/${iptables} -I FORWARD $accept
+		sudo /sbin/${iptables} -I OUTPUT $accept
 
 		# DNAT external traffic
 		sudo /sbin/${iptables} -I PREROUTING -d $dstAddr $dnat
