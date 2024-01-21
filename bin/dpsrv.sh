@@ -257,6 +257,21 @@ function dpsrv-iptables-list-ports() {
 	done
 }
 
+function dpsrv-iptables-debug() {
+	local action=I
+	if [ $1 = "off" ]; then
+		action=D
+	fi
+
+	/sbin/iptables -$action INPUT 1 -j LOG
+	/sbin/iptables -$action FORWARD 1 -j LOG
+	/sbin/iptables -$action OUTPUT 1 -j LOG
+	/sbin/iptables -t nat -$action PREROUTING 1 -j LOG
+	/sbin/iptables -t nat -$action POSTROUTING 1 -j LOG
+	/sbin/iptables -t nat -$action OUTPUT 1 -j LOG
+}
+
+
 function dpsrv-activate() {(
 	set -e
 	local containerName=$1
