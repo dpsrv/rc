@@ -176,8 +176,8 @@ function dpsrv-iptables-forward-port() {(
 	local localAddr_iptables=127.0.0.1
 	local localAddr_ip6tables=::1
 
-	local dstAddr_iptables=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ','|sed 's/,*$//g')
-	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ','|sed 's/,*$//g')
+	local dstAddr_iptables=$(hostname -I|tr ' ' '\n'|grep -v ':'|tr '\n' ' '|sed 's/ *$//g')
+	local dstAddr_ip6tables=$(hostname -I|tr ' ' '\n'|grep ':'|tr '\n' ' '|sed 's/ *$//g')
 
 	local bridgeIP=$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
 	local brideIF=$(ip -json address show to "$bridgeIP/32" | jq -r '.[].ifname')
@@ -205,10 +205,19 @@ function dpsrv-iptables-forward-port() {(
 		#sudo /sbin/${iptables} -I OUTPUT $accept
 
 		# DNAT external traffic
-		sudo /sbin/${iptables} -I PREROUTING -d $dstAddr $dnat
+		for daddr in $dstAddr; do
+			sudo /sbin/${iptables} -I PREROUTING -d $daddr $dnat
+		done
 
 		# DNAT internal traffic
-		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,$dstAddr $dnat
+		for daddr in $localAddr $dstAddr; do
+			sudo /sbin/${iptables} -I OUTPUT -d $daddr $dnat
+		done
+
+		# Own traffic
+		for daddr in $dstAddr; do
+			sudo /sbin/${iptables} -I POSTROUTING -s $daddr/32 -d $daddr/32 -p tcp -m tcp --dport $dport -j MASQUERADE
+		done
 
 	done
 )}
