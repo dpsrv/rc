@@ -216,7 +216,7 @@ function dpsrv-iptables-forward-port() {(
 
 		# Own traffic
 		for daddr in $dstAddr; do
-			sudo /sbin/${iptables} -I POSTROUTING -s $daddr/32 -d $daddr/32 -p tcp -m tcp --dport $dport -j MASQUERADE
+			sudo /sbin/${iptables} -t nat -I POSTROUTING -s $daddr/32 -d $daddr/32 -p tcp -m tcp --dport $dport -j MASQUERADE
 		done
 
 	done
