@@ -208,7 +208,7 @@ function dpsrv-iptables-forward-port() {(
 
 		sudo /sbin/${iptables} -I OUTPUT $dnat
 
-		sudo /sbin/${iptables} -I POSTROUTING ! -i $brideIF $masquerade
+		sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
 	done
 )}
