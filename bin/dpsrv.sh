@@ -171,8 +171,6 @@ function dpsrv-iptables-forward-port() {(
 
 	local comment="dpsrv:forward:port:$proto:$dport"
 
-	local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
-
 	local localAddr_iptables=127.0.0.1
 	local localAddr_ip6tables=::1
 
@@ -195,29 +193,22 @@ function dpsrv-iptables-forward-port() {(
 		[ -n "$dstAddr" ] || continue
 		[ -n "$toAddr" ] || continue
 
+		local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
 		#local redirect="-t nat -p $proto --dport $dport -j REDIRECT --to-port $cport -m comment --comment $comment"
+		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		# Accept connections on port $dport
-		sudo /sbin/${iptables} -I INPUT $accept
-		sudo /sbin/${iptables} -i lo -I INPUT $accept
-		#sudo /sbin/${iptables} -I FORWARD $accept
-		#sudo /sbin/${iptables} -I OUTPUT $accept
+		sudo /sbin/${iptables} -I INPUT ! -i $brideIF $accept
+		sudo /sbin/${iptables} -I INPUT -i lo $accept
+		#sudo /sbin/${iptables} -I FORWARD ! -i $brideIF $accept
+		#sudo /sbin/${iptables} -I OUTPUT ! -i $brideIF $accept
 
-		# DNAT external traffic
-		for daddr in $dstAddr; do
-			sudo /sbin/${iptables} -I PREROUTING -d $daddr $dnat
-		done
+		sudo /sbin/${iptables} -I PREROUTING ! -i $brideIF $dnat
 
-		# DNAT internal traffic
-		for daddr in $localAddr $dstAddr; do
-			sudo /sbin/${iptables} -I OUTPUT -d $daddr $dnat
-		done
+		sudo /sbin/${iptables} -I OUTPUT ! -i $brideIF $dnat
 
-		# Own traffic
-		for daddr in $dstAddr; do
-			sudo /sbin/${iptables} -t nat -I POSTROUTING -s $daddr/32 -d $daddr/32 -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment
-		done
+		sudo /sbin/${iptables} -I POSTROUTING ! -i $brideIF $masquerade
 
 	done
 )}
