@@ -202,11 +202,11 @@ function dpsrv-iptables-forward-port() {(
 		sudo /sbin/${iptables} -I INPUT ! -i $brideIF $accept
 		sudo /sbin/${iptables} -I INPUT -i lo $accept
 		#sudo /sbin/${iptables} -I FORWARD ! -i $brideIF $accept
-		#sudo /sbin/${iptables} -I OUTPUT ! -i $brideIF $accept
+		#sudo /sbin/${iptables} -I OUTPUT $accept
 
 		sudo /sbin/${iptables} -I PREROUTING ! -i $brideIF $dnat
 
-		sudo /sbin/${iptables} -I OUTPUT ! -i $brideIF $dnat
+		sudo /sbin/${iptables} -I OUTPUT $dnat
 
 		sudo /sbin/${iptables} -I POSTROUTING ! -i $brideIF $masquerade
 
