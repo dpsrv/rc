@@ -195,10 +195,12 @@ function dpsrv-iptables-forward-port() {(
 
 		local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
+		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		sudo /sbin/${iptables} -I INPUT $accept
 		sudo /sbin/${iptables} -I PREROUTING $dnat
 		sudo /sbin/${iptables} -I OUTPUT $dnat
+		sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
 	done
 )}
