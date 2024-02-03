@@ -155,15 +155,16 @@ function dpsrv-openssl-cert() {
 function dpsrv-iptables-forward-port() {(
 	set -e
 
-	local proto=$1
-	local cport=$2
-	local dport=$3
-	local toAddr_iptables=$4
-	local toAddr_iptables6=$5
+	local if_type=$1
+	local proto=$2
+	local cport=$3
+	local dport=$4
+	local toAddr_iptables=$5
+	local toAddr_iptables6=$6
 
 	if [ -z "$toAddr_iptables" ]; then
-		echo "Usage: $FUNCNAME <protocol> <cport> <dport> <container ipv4> [container ipv6]"
-		echo " e.g.: $FUNCNAME tcp 50080 80 172.18.0.3"
+		echo "Usage: $FUNCNAME <public|private> <tcp|udp> <container port> <destination port> <container ipv4> [container ipv6]"
+		echo " e.g.: $FUNCNAME public tcp 50080 80 172.18.0.3"
 		return 1
 	fi
 
@@ -198,7 +199,7 @@ function dpsrv-iptables-forward-port() {(
 		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		sudo /sbin/${iptables} -I INPUT $accept
-		sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
+		[ "$public" != "public" ] || sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
@@ -269,10 +270,11 @@ function dpsrv-iptables-debug() {
 function dpsrv-activate() {(
 	set -e
 	local containerName=$1
+	local if_type=${2:-public}
 
 	if [ -z "$containerName" ]; then
-		echo "Usage: $FUNCNAME <svc name>"
-		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0"
+		echo "Usage: $FUNCNAME <svc name> [public|private]"
+		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0 private"
 		echo
 		echo "Services:"
 		docker ps --format json|jq -r .Names
@@ -282,7 +284,7 @@ function dpsrv-activate() {(
 	local toAddr=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerName)
 	while read cport dport proto; do
 		[ -n "$cport" ] || continue
-		dpsrv-iptables-forward-port $proto $cport $dport $toAddr 
+		dpsrv-iptables-forward-port $if_type $proto $cport $dport $toAddr 
 	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
 )}
 
