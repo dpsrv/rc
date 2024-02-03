@@ -199,7 +199,7 @@ function dpsrv-iptables-forward-port() {(
 		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		sudo /sbin/${iptables} -I INPUT $accept
-		[ "$public" != "public" ] || sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
+		[ "$if_type" != "public" ] || sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
