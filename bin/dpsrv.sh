@@ -6,6 +6,7 @@ export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/do
 export DPSRV_SERVICES_UP=( scheduler bind nginx mongo )
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
+export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64 -w 0)
 
 if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
