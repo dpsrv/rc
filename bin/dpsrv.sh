@@ -2,6 +2,12 @@ cd $(dirname ${BASH_SOURCE[0]})/../..
 export DPSRV_HOME=$PWD
 cd $OLDPWD
 
+if [ -f $DPSRV_HOME/local.env ]; then
+	[[ $- =~ a ]] || set -a && a=a
+	. $DPSRV_HOME/local.env
+	[ -z $a ] || set +a
+fi
+
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
 export DPSRV_SERVICES_UP=( scheduler bind nginx mongo )
 
