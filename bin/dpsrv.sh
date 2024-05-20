@@ -296,7 +296,7 @@ function dpsrv-activate() {(
 		[ -n "$cport" ] || continue
 		[ -n "$dport" ] || continue
 		dpsrv-iptables-forward-port $if_type $proto $cport $dport $toAddr 
-	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g')
+	done < <(docker ps -f name=$containerName --format json|jq -r .Ports|sed 's/, /\n/g' | sed 's/^.*://g' | sed 's/->/ /g' | sed 's#/# #g' | while read cport dport proto; do [ -z "$proto" ] || echo "$cport $dport $proto"; done )
 )}
 
 function dpsrv-deactivate() {(
