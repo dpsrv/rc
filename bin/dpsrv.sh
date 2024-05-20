@@ -9,7 +9,7 @@ if [ -f $DPSRV_HOME/local.env ]; then
 fi
 
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
-export DPSRV_SERVICES_UP=( scheduler bind nginx mongo mailserver )
+export DPSRV_SERVICES_UP=( scheduler bind nginx mongo mysql mailserver roundcube )
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
 export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64 -w 0)
