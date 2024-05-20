@@ -2,6 +2,11 @@ cd $(dirname ${BASH_SOURCE[0]})/../..
 export DPSRV_HOME=$PWD
 cd $OLDPWD
 
+export HOSTNAME=${HOSTNAME:-$(hostname)}
+if ! [ -e $DPSRV_HOME/local.env ] && [ -e $DPSRV_HOME/rc/secrets/local/$HOSTNAME/local.env ]; then
+	ln -s $DPSRV_HOME/rc/secrets/local/$HOSTNAME/local.env $DPSRV_HOME/local.env
+fi
+
 if [ -f $DPSRV_HOME/local.env ]; then
 	[[ $- =~ a ]] || set -a && a=a
 	. $DPSRV_HOME/local.env
@@ -9,9 +14,7 @@ if [ -f $DPSRV_HOME/local.env ]; then
 fi
 
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
-export DPSRV_SERVICES_UP=( scheduler bind nginx mongo mysql mailserver roundcube )
 
-export HOSTNAME=${HOSTNAME:-$(hostname)}
 export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64 -w 0)
 
 if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
@@ -52,7 +55,7 @@ function dpsrv-unlock-keychain() {
 function dpsrv-up() {(
 	set -e
 	dpsrv-unlock-keychain
-	for service in "${DPSRV_SERVICES_UP[@]}"; do
+	for service in $DPSRV_SERVICES_UP; do
 		cd $DPSRV_HOME/$service
 		echo "Bringing up ${PWD##*/}"
 		docker compose up --build -d
