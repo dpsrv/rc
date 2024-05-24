@@ -365,3 +365,20 @@ function dpsrv-cp() {(
 	docker save $image | bzip2 | pv | ssh $dest 'bunzip2 | docker load'
 )}
 
+function dpsrv-k8s-secrets() {(
+	set -a
+
+	export file
+	export namespace
+
+	find $DPSRV_HOME/rc/secrets -name '*.env' | while read file; do
+		namespace=$(basename $file .env)
+			. $file
+			grep '^[^=]*=' $file | cut -d= -f1 | while read name; do
+				[ -n "$name" ] || continue
+				sudo kubectl create secret generic abcd --save-config --dry-run=client "--from-literal=$name=${!name}" -o yaml| sudo kubectl apply -f -
+			done
+	done
+
+)}
+
