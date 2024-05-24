@@ -4,6 +4,7 @@ cd $OLDPWD
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
 if ! [ -e $DPSRV_HOME/local.env ] && [ -e $DPSRV_HOME/rc/secrets/local/$HOSTNAME/$HOSTNAME.env ]; then
+	[ ! -l $DPSRV_HOME/local.env ] || rm $DPSRV_HOME/local.env
 	ln -s $DPSRV_HOME/rc/secrets/local/$HOSTNAME/$HOSTNAME.env $DPSRV_HOME/local.env
 fi
 
