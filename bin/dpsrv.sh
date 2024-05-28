@@ -102,7 +102,7 @@ function dpsrv-git-status() {(
 		dir=${dir%.git}
 		cd $dir
 		echo "Checking ${PWD##*/}"
-		git status
+		git status --porcelain
 		cd $OLDPWD
 	done
 )}
