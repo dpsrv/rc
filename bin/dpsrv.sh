@@ -101,8 +101,11 @@ function dpsrv-git-status() {(
 	ls -1d $DPSRV_HOME/*/.git | while read dir; do
 		dir=${dir%.git}
 		cd $dir
-		echo "Checking ${PWD##*/}"
-		git status --porcelain
+		status=$( git status --porcelain )
+		if [ -n "$status" ]; then
+			echo "Checking ${PWD##*/}"
+			echo "$status"
+		fi
 		cd $OLDPWD
 	done
 )}
