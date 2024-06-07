@@ -3,7 +3,7 @@ export DPSRV_HOME=$PWD
 cd $OLDPWD
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
-if [ -e $DPSRV_HOME/local.env ] && ! [ -l $DPSRV_HOME/local.env ]; then
+if [ -e $DPSRV_HOME/local.env ] && ! [ -h $DPSRV_HOME/local.env ]; then
 	rm -rf $DPSRV_HOME/local.env
 fi
 
