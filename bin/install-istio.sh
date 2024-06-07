@@ -2,23 +2,29 @@
 
 # From https://istio.io/latest/docs/setup/install/helm/
 
+ns=istio-system
+
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
-kubectl create namespace istio-system
-helm install istio-base istio/base -n istio-system --set defaultRevision=default
 
-exit 
+kubectl create namespace $ns
 
-wait till deployed
+helm install istio-base istio/base -n $ns --set defaultRevision=default --wait
+while ! kubectl -n $ns get pods | tail -n +2 | awk '{ print $3 }' | egrep -v '(Running|Completed)'; do
+        echo "Waiting for $ns to come up"
+        sleep 5
+done
 
-helm ls -n istio-system
+helm ls -n $ns
 
-helm install istiod istio/istiod -n istio-system --wait
+helm install istiod istio/istiod -n $ns --wait
 
-helm ls -n istio-system
+helm ls -n $ns
 
-kubectl create namespace istio-ingress
-helm install istio-ingress istio/gateway -n istio-ingress --wait
+ingressNS=istio-ingress
+
+kubectl create namespace $ingressNS
+helm install istio-ingress istio/gateway -n $ingressNS --wait
 
 
 
