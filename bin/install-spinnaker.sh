@@ -9,7 +9,7 @@ helm repo update
 
 kubectl create namespace $ns
 
-helm install oss-spin spinnaker/spinnaker -n $ns --wait
+helm install oss-spin spinnaker/spinnaker -n $ns --timeout 30m --wait
 while ! kubectl -n $ns get pods | tail -n +2 | awk '{ print $3 }' | egrep -v '(Running|Completed)'; do
 	echo "Waiting for $ns to come up"
 	sleep 5
