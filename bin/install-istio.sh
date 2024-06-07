@@ -10,7 +10,7 @@ helm repo update
 kubectl create namespace $ns
 
 helm install istio-base istio/base -n $ns --set defaultRevision=default --wait
-while ! kubectl -n $ns get pods | tail -n +2 | awk '{ print $3 }' | egrep -v '(Running|Completed)'; do
+while ! helm status istio-base -n $ns -o json | jq -r .info.status | grep -q deployed; do
         echo "Waiting for $ns to come up"
         sleep 5
 done
