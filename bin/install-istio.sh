@@ -23,14 +23,11 @@ function waitForHelmDeployed() {
 helm -n $ns install istio-base istio/base --set defaultRevision=default --wait
 waitForHelmDeployed $ns istio-base
 
-helm -ns $ns install istiod istio/istiod --wait
+helm -n $ns install istiod istio/istiod --wait
 waitForHelmDeployed $ns istiod
 
-ingressNS=istio-ingress
-kubectl create namespace $ingressNS
-
-helm -n $ingressNS install istio-ingress istio/gateway --wait
-waitForHelmDeployed $ingressNS istio-ingress
+helm -n $ns install istio-ingress istio/gateway --wait
+waitForHelmDeployed $ns istio-ingress
 
 
 
