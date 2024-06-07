@@ -9,22 +9,28 @@ helm repo update
 
 kubectl create namespace $ns
 
-helm install istio-base istio/base -n $ns --set defaultRevision=default --wait
-while ! helm status istio-base -n $ns -o json | jq -r .info.status | grep -q deployed; do
-        echo "Waiting for $ns to come up"
+function waitForHelmDeployed() {
+	local ns=$1
+	local release=$2
+
+	while ! helm status -n $ns $release -o json | jq -r .info.status | grep -q deployed; do
+        echo "Waiting for $ns $release to come up"
         sleep 5
-done
+	done
+	helm ls -n $ns
+}
 
-helm ls -n $ns
+helm -n $ns install istio-base istio/base --set defaultRevision=default --wait
+waitForHelmDeployed $ns istio-base
 
-helm install istiod istio/istiod -n $ns --wait
-
-helm ls -n $ns
+helm -ns $ns install istiod istio/istiod --wait
+waitForHelmDeployed $ns istiod
 
 ingressNS=istio-ingress
-
 kubectl create namespace $ingressNS
+
 helm install istio-ingress istio/gateway -n $ingressNS --wait
+waitForHelmDeployed $ingressNS istio-ingress
 
 
 
