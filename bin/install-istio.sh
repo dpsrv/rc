@@ -13,11 +13,11 @@ function waitForHelmDeployed() {
 	local ns=$1
 	local release=$2
 
-	while ! helm status -n $ns $release -o json | jq -r .info.status | grep -q deployed; do
+	while ! helm -n $ns status $release -o json | jq -r .info.status | grep -q deployed; do
         echo "Waiting for $ns $release to come up"
         sleep 5
 	done
-	helm ls -n $ns
+	helm -n $ns ls
 }
 
 helm -n $ns install istio-base istio/base --set defaultRevision=default --wait
@@ -29,7 +29,7 @@ waitForHelmDeployed $ns istiod
 ingressNS=istio-ingress
 kubectl create namespace $ingressNS
 
-helm install istio-ingress istio/gateway -n $ingressNS --wait
+helm -n $ingressNS install istio-ingress istio/gateway --wait
 waitForHelmDeployed $ingressNS istio-ingress
 
 
