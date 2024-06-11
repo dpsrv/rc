@@ -1,5 +1,10 @@
 #!/bin/bash -ex
 
+if [ "$(id -u)" != "0" ]; then
+	sudo $0 "$@"
+	exit
+fi
+ 
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='--disable traefik' sh -s - --docker
 
 [ -f /etc/rancher/k3s/config.yaml ] || cat > /etc/rancher/k3s/config.yaml << _EOT_
