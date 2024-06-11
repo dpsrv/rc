@@ -2,13 +2,13 @@
 
 # From https://istio.io/latest/docs/setup/install/helm/
 
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
+
 kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
   { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.1.0" | kubectl apply -f -; }
 
 ns=istio-system
-
-helm repo add istio https://istio-release.storage.googleapis.com/charts
-helm repo update
 
 kubectl create namespace $ns
 
@@ -29,8 +29,12 @@ waitForHelmDeployed $ns istio-base
 helm -n $ns install istiod istio/istiod --wait
 waitForHelmDeployed $ns istiod
 
-helm -n $ns install istio-ingress istio/gateway --wait
-waitForHelmDeployed $ns istio-ingress
+ns=istio-ingress
+kubectl create namespace $ns
+helm -n $ns install istio-ingressgateway istio/gateway --wait
+waitForHelmDeployed $ns istio-ingressgateway
+kubectl label namespace $ns istio-injection=disabled
 
+kubectl label namespace default istio-injection=enabled
 
 
