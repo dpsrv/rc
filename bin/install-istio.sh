@@ -31,9 +31,9 @@ waitForHelmDeployed $ns istiod
 
 ns=istio-ingress
 kubectl create namespace $ns
+kubectl label namespace $ns istio-injection=disabled
 helm -n $ns install istio-ingressgateway istio/gateway --wait
 waitForHelmDeployed $ns istio-ingressgateway
-kubectl label namespace $ns istio-injection=disabled
 
 kubectl label namespace default istio-injection=enabled
 
