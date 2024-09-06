@@ -373,6 +373,15 @@ function dpsrv-cp() {(
 	docker save $image | bzip2 | pv | ssh $dest 'bunzip2 | docker load'
 )}
 
+function dpsrv-docker2k8s-registries() {(
+	set -a
+
+	kubectl create secret generic dockerconfigjson \
+		--from-file=.dockerconfigjson=$HOME/.docker/config.json \
+		--type=kubernetes.io/dockerconfigjson
+
+)}
+
 function dpsrv-k8s-secrets() {(
 	set -a
 
