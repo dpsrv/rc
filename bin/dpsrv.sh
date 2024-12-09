@@ -402,6 +402,7 @@ function dpsrv-k8s-secrets() {(
 )}
 
 function dpsrv-logs-truncate() {(
+	set -x
 	# Get the disk usage of the logs in kilobytes and sort them by size
 	local logs=$(du -k /var/lib/docker/containers/**/*-json.log | sort -hr)
 
@@ -416,6 +417,7 @@ function dpsrv-logs-truncate() {(
 			echo "Truncating $filepath (Size: $size KB)"
 			# Truncate the log file
 			> "$filepath"
+			echo "$filepath"
 		fi
 	done <<< "$logs"
 
