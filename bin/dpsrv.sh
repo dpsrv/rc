@@ -294,7 +294,7 @@ function dpsrv-activate() {(
 		echo " e.g.: $FUNCNAME dpsrv-bind-1.0.0 private"
 		echo
 		echo "Services:"
-		docker ps --format json|jq -r .Names
+		docker ps --format json|jq -r .Names|sort
 		return 1
 	fi
 
