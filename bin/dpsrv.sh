@@ -401,3 +401,25 @@ function dpsrv-k8s-secrets() {(
 
 )}
 
+function dpsrv-logs-truncate() {(
+	set -x
+	# Get the disk usage of the logs in kilobytes and sort them by size
+	local logs=$(sudo du -k /var/lib/docker/containers/**/*-json.log | sort -hr)
+
+	# Loop through each line of the output
+	while IFS= read -r line; do
+		# Extract the size and the file path
+		local size=$(echo $line | awk '{print $1}')
+		local filepath=$(echo $line | awk '{print $2}')
+
+		# Check if the size is more than 100MB (100MB = 102400KB)
+		if [ "$size" -gt 102400 ]; then
+			echo "Truncating $filepath (Size: $size KB)"
+			# Truncate the log file
+			> "$filepath"
+			echo "$filepath"
+		fi
+	done <<< "$logs"
+
+	echo "Log truncation complete."
+)}
