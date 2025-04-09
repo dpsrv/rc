@@ -2,6 +2,8 @@ cd $(dirname ${BASH_SOURCE[0]})/../..
 export DPSRV_HOME=$PWD
 cd $OLDPWD
 
+[ ! -e /etc/profile.d/dpsrv.sh ] || . /etc/profile.d/dpsrv.sh
+
 export HOSTNAME=${HOSTNAME:-$(hostname)}
 if [ -e $DPSRV_HOME/local.env ] && ! [ -h $DPSRV_HOME/local.env ]; then
 	rm -rf $DPSRV_HOME/local.env
@@ -60,7 +62,7 @@ function dpsrv-unlock-keychain() {
 }
 
 function dpsrv-up() {(
-	set -ex
+	set -e
 	dpsrv-unlock-keychain
 	for service in $DPSRV_SERVICES_UP; do
 		cd $DPSRV_HOME/$service
