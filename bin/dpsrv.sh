@@ -60,7 +60,7 @@ function dpsrv-unlock-keychain() {
 }
 
 function dpsrv-up() {(
-	set -e
+	set -ex
 	dpsrv-unlock-keychain
 	for service in $DPSRV_SERVICES_UP; do
 		cd $DPSRV_HOME/$service
