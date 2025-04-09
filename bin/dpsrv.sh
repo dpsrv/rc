@@ -7,7 +7,7 @@ if [ -e $DPSRV_HOME/local.env ] && ! [ -h $DPSRV_HOME/local.env ]; then
 	rm -rf $DPSRV_HOME/local.env
 fi
 
-for local_env in $DPSRV_PROVIDER-$DPSRV_REGION-$DPSRV_NODE_ID $DPSRV_PROVIDER-$DPSRV_REGION $DPSRV_PROVIDER; do 
+for local_env in $DPSRV_REGION-$DPSRV_NODE $DPSRV_REGION; do 
 	[ ! -e $DPSRV_HOME/local.env ] || break
 	local_env_path=$DPSRV_HOME/rc/secrets/local/$local_env/$local_env.env
 	[ -e $local_env_path ] || continue
