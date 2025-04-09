@@ -7,9 +7,12 @@ if [ -e $DPSRV_HOME/local.env ] && ! [ -h $DPSRV_HOME/local.env ]; then
 	rm -rf $DPSRV_HOME/local.env
 fi
 
-if ! [ -e $DPSRV_HOME/local.env ] && [ -e $DPSRV_HOME/rc/secrets/local/$HOSTNAME/$HOSTNAME.env ]; then
-	ln -s $DPSRV_HOME/rc/secrets/local/$HOSTNAME/$HOSTNAME.env $DPSRV_HOME/local.env
-fi
+for local_env in $DPSRV_PROVIDER-$DPSRV_REGION-$DPSRV_NODE_ID $DPSRV_PROVIDER-$DPSRV_REGION $DPSRV_PROVIDER; do 
+	[ ! -e $DPSRV_HOME/local.env ] || break
+	local_env_path=$DPSRV_HOME/rc/secrets/local/$local_env/$local_env.env
+	[ -e $local_env_path ] || continue
+	ln -s $local_env_path $DPSRV_HOME/local.env
+done
 
 if [ -f $DPSRV_HOME/local.env ]; then
 	[[ $- =~ a ]] || set -a && a=a
