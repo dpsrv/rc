@@ -70,6 +70,7 @@ function dpsrv-up() {(
 		docker compose up --build -d
 		echo "exit: $?"
 		cd $OLDPWD
+		dpsrv-activate $service
 	done
 )}
 
