@@ -228,7 +228,7 @@ function dpsrv-iptables-forward-port() {(
 		[ "$if_type" != "public" ] || sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I POSTROUTING $snat
-		#sudo /sbin/${iptables} -I POSTROUTING $masquerade
+		sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
 	done
 )}
