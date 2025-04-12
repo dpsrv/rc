@@ -22,6 +22,8 @@ if [ -f $DPSRV_HOME/local.env ]; then
 	[ -z $a ] || set +a
 fi
 
+export DPSRV_SUBNET=$(docker inspect dpsrv | jq -r '.[0].IPAM.Config[0].Subnet')
+
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
 
 export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64|tr -d \\\n)
@@ -219,8 +221,7 @@ function dpsrv-iptables-forward-port() {(
 
 		local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
-		local snat="-t nat -p $proto --dport $dport -j MASQUERADE -d $toAddr -m comment --comment $comment"
-
+		local snat="-t nat -p $proto --dport $dport -j MASQUERADE -s $DPSRV_SUBNET -d $toAddr -m comment --comment $comment"
 		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		sudo /sbin/${iptables} -I INPUT $accept
