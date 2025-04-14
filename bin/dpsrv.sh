@@ -221,14 +221,15 @@ function dpsrv-iptables-forward-port() {(
 
 		local accept="-p $proto -j ACCEPT -m comment --comment $comment --dport $dport"
 		local dnat="-t nat -p $proto --dport $dport -j DNAT --to-destination $toAddr:$dport -m comment --comment $comment"
-		local snat="-t nat -p $proto --dport $dport -j MASQUERADE -s $DPSRV_SUBNET -d $toAddr -m comment --comment $comment"
+		#local snat="-t nat -p $proto --dport $dport -j MASQUERADE -s $DPSRV_SUBNET -d $toAddr -m comment --comment $comment"
+		local snat="-t nat -p $proto --dport $dport -j MASQUERADE -s $DPSRV_SUBNET -d $DPSRV_SUBNET -m comment --comment $comment"
 		local masquerade="-t nat -p $proto --dport $dport -j MASQUERADE -m comment --comment $comment"
 
 		sudo /sbin/${iptables} -I INPUT $accept
 		[ "$if_type" != "public" ] || sudo /sbin/${iptables} -I PREROUTING -d ${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I OUTPUT -d $localAddr,${dstAddr// /,} $dnat
 		sudo /sbin/${iptables} -I POSTROUTING $snat
-		sudo /sbin/${iptables} -I POSTROUTING $masquerade
+		#sudo /sbin/${iptables} -I POSTROUTING $masquerade
 
 	done
 )}
