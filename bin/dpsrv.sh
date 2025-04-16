@@ -24,7 +24,7 @@ fi
 
 export DPSRV_SUBNET=$(docker inspect dpsrv | jq -r '.[0].IPAM.Config[0].Subnet')
 
-export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
+export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml 2>/dev/null | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
 
 export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64|tr -d \\\n)
 
