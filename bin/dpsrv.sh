@@ -22,7 +22,7 @@ if [ -f $DPSRV_HOME/local.env ]; then
 	[ -z $a ] || set +a
 fi
 
-export DPSRV_SUBNET=$(docker inspect dpsrv | jq -r '.[0].IPAM.Config[0].Subnet')
+export DPSRV_SUBNET=$(docker network inspect dpsrv | jq -r '.[0].IPAM.Config[0].Subnet')
 
 export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/docker-compose.yml 2>/dev/null | sed "s#^$DPSRV_HOME/##g"|cut -d/ -f1 ) )
 
