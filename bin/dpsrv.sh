@@ -31,6 +31,8 @@ export DPSRV_SERVICES=( $( grep -l 'restart:[ ]*unless-stopped' $DPSRV_HOME/*/do
 
 export GIT_CREDENTIALS=$(cat $HOME/.git-credentials|base64|tr -d \\\n)
 
+export GPG_TTY=$(tty)
+
 if ! [[ "$PATH" =~ "$DPSRV_HOME/rc/bin" ]]; then
 	export PATH="$PATH:$DPSRV_HOME/rc/bin"
 fi
