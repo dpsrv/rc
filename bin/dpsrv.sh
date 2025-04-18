@@ -5,16 +5,19 @@ cd $OLDPWD
 [ ! -e /etc/profile.d/dpsrv.sh ] || . /etc/profile.d/dpsrv.sh
 
 export HOSTNAME=${HOSTNAME:-$(hostname)}
-if [ -e $DPSRV_HOME/local.env ] && ! [ -h $DPSRV_HOME/local.env ]; then
-	rm -rf $DPSRV_HOME/local.env
-fi
 
-for local_env in $DPSRV_REGION-$DPSRV_NODE $DPSRV_REGION; do 
-	[ ! -e $DPSRV_HOME/local.env ] || break
-	local_env_path=$DPSRV_HOME/rc/secrets/local/$local_env/$local_env.env
-	[ -e $local_env_path ] || continue
-	ln -s $local_env_path $DPSRV_HOME/local.env
-done
+if [ ! -e $DPSRV_HOME/local.env ]; then
+	for local_env in $DPSRV_REGION-$DPSRV_NODE $DPSRV_REGION; do 
+		[ ! -e $DPSRV_HOME/local.env ] || break
+		local_env_path=$DPSRV_HOME/rc/secrets/local/$local_env/$local_env.env
+		[ -e $local_env_path ] || continue
+		cp $local_env_path $DPSRV_HOME/local.env
+		cat <<_EOT_ >> $DPSRV_HOME/local.env
+DPSRV_REGION=$DPSRV_REGION
+DPSRV_NODE=$DPSRV_NODE
+_EOT_
+	done
+fi
 
 if [ -f $DPSRV_HOME/local.env ]; then
 	[[ $- =~ a ]] || set -a && a=a
