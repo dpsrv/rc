@@ -4,7 +4,7 @@ metadata:
   namespace: dpsrv
   name: rc-refresh
 spec:
-  schedule: "*/1 * * * *"      # every minute
+  schedule: "*/5 * * * *"      # every 5 minutes
   concurrencyPolicy: Forbid     # prevent overlapping jobs
   jobTemplate:
     spec:
