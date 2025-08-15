@@ -1,0 +1,98 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: dpsrv
+  name: rc-refresh
+spec:
+  schedule: "*/1 * * * *"      # every minute
+  concurrencyPolicy: Forbid     # prevent overlapping jobs
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          # Init container
+          initContainers:
+            - name: clone
+              image: busybox
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Initializing directory" > /data/cron.log
+                  echo "GIT_USER=$GIT_USER" >> /data/cron.log
+                  echo "GIT_TOKEN=$GIT_TOKEN" >> /data/cron.log
+              env:
+                - name: GIT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: GIT_CREDS
+                      key: username
+                - name: GIT_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: GIT_CREDS
+                      key: token
+              volumeMounts:
+                - name: shared-storage
+                  mountPath: /data
+                - name: git-credentials
+                  mountPath: /root/.git-credentials
+                  readOnly: true
+                - name: git-openssl-salt
+                  mountPath: /root/.config/git/openssl-salt
+                  readOnly: true
+                - name: git-openssl-password
+                  mountPath: /root/.config/git/openssl-password
+                  readOnly: true
+
+          # Main container
+          containers:
+            - name: pull
+              image: busybox
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Cron ran at $(date)" >> /data/cron.log
+                  echo "Using GIT_USER=$GIT_USER" >> /data/cron.log
+                  echo "Using GIT_TOKEN=$GIT_TOKEN" >> /data/cron.log
+                  sleep 30
+              env:
+                - name: GIT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: GIT_CREDS
+                      key: username
+                - name: GIT_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: GIT_CREDS
+                      key: token
+              volumeMounts:
+                - name: shared-storage
+                  mountPath: /data
+                - name: git-credentials
+                  mountPath: /root/.git-credentials
+                  readOnly: true
+                - name: git-openssl-salt
+                  mountPath: /root/.config/git/openssl-salt
+                  readOnly: true
+                - name: git-openssl-password
+                  mountPath: /root/.config/git/openssl-password
+                  readOnly: true
+
+          restartPolicy: OnFailure
+          volumes:
+            - name: shared-storage
+              hostPath:
+                path: /tmp/shared-cron
+                type: DirectoryOrCreate
+            - name: git-credentials
+              secret:
+                secretName: git-credentials
+            - name: git-openssl-salt
+              secret:
+                secretName: git-openssl-salt
+            - name: git-openssl-password
+              secret:
+                secretName: git-openssl-password
