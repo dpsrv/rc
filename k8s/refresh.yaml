@@ -16,22 +16,11 @@ spec:
               image: busybox
               command:
                 - sh
+                - -x
                 - -c
                 - |
                   echo "Initializing directory" > /data/cron.log
-                  echo "GIT_USER=$GIT_USER" >> /data/cron.log
-                  echo "GIT_TOKEN=$GIT_TOKEN" >> /data/cron.log
-              env:
-                - name: GIT_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: GIT_CREDS
-                      key: username
-                - name: GIT_TOKEN
-                  valueFrom:
-                    secretKeyRef:
-                      name: GIT_CREDS
-                      key: token
+                  ls -la ~/ /mnt/ >> /data/cron.log
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
@@ -51,23 +40,11 @@ spec:
               image: busybox
               command:
                 - sh
+                - -x
                 - -c
                 - |
                   echo "Cron ran at $(date)" >> /data/cron.log
-                  echo "Using GIT_USER=$GIT_USER" >> /data/cron.log
-                  echo "Using GIT_TOKEN=$GIT_TOKEN" >> /data/cron.log
-                  sleep 30
-              env:
-                - name: GIT_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: GIT_CREDS
-                      key: username
-                - name: GIT_TOKEN
-                  valueFrom:
-                    secretKeyRef:
-                      name: GIT_CREDS
-                      key: token
+                  ls -la ~/ /mnt/ >> /data/cron.log
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
