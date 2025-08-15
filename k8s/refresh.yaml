@@ -4,7 +4,7 @@ metadata:
   namespace: dpsrv
   name: rc-refresh
 spec:
-  schedule: "*/5 * * * *"      # every 5 minutes
+  schedule: "*/1 * * * *"      # every 5 minutes
   concurrencyPolicy: Forbid     # prevent overlapping jobs
   jobTemplate:
     spec:
@@ -12,14 +12,22 @@ spec:
         spec:
           containers:
             - name: pull
-              image: alpine/git
+              image: maxfortun/private:alpine-tools-1
               command:
                 - sh
+                - -x
                 - -c
                 - |
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
+                  git config --local commit.gpgsign false
+                  cat ~/.git-credentials
+                  cat ~/.gitconfig
+                  find .secrets -type f
                   git pull -q
+                  git status --porcelain |awk '{ print $2 }'|grep -v '/$' | xargs git add
+                  git commit -a -m updated
+                  git push
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data

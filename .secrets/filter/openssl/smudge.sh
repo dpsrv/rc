@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 . .secrets/git-setenv-openssl-secrets.sh
 
 if [ "$GIT_FILTER_OPENSSL_DEBUG" = "true" ]; then
