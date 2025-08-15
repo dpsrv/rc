@@ -19,8 +19,8 @@ spec:
                 - -x
                 - -c
                 - |
-                  echo "Initializing directory" > /data/cron.log
-                  ls -la ~/ /mnt/ >> /data/cron.log
+                  echo "Initializing directory" >> /mnt/data/cron.log
+                  ls -la ~/ /mnt/ >> /mnt/data/cron.log
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
@@ -43,8 +43,8 @@ spec:
                 - -x
                 - -c
                 - |
-                  echo "Cron ran at $(date)" >> /data/cron.log
-                  ls -la ~/ /mnt/ >> /data/cron.log
+                  echo "Cron ran at $(date)" >> /mnt/data/cron.log
+                  ls -la ~/ /mnt/ >> /mnt/data/cron.log
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
