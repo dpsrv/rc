@@ -10,41 +10,17 @@ spec:
     spec:
       template:
         spec:
-          # Init container
-          initContainers:
-            - name: clone
-              image: busybox
-              command:
-                - sh
-                - -x
-                - -c
-                - |
-                  echo "Initializing directory" >> /mnt/data/cron.log
-                  ls -la ~/ /mnt/ >> /mnt/data/cron.log
-              volumeMounts:
-                - name: data
-                  mountPath: /mnt/data
-                - name: git-credentials
-                  mountPath: /root/.git-credentials
-                  readOnly: true
-                - name: git-openssl-salt
-                  mountPath: /root/.config/git/openssl-salt
-                  readOnly: true
-                - name: git-openssl-password
-                  mountPath: /root/.config/git/openssl-password
-                  readOnly: true
-
-          # Main container
           containers:
             - name: pull
-              image: busybox
+              image: alpine/git
               command:
                 - sh
                 - -x
                 - -c
                 - |
-                  echo "Cron ran at $(date)" >> /mnt/data/cron.log
-                  ls -la ~/ /mnt/ >> /mnt/data/cron.log
+                  echo "Cron ran at $(date)"
+                  cd /mnt/data/dpsrv/rc
+                  git pull
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
