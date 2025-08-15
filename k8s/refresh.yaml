@@ -15,13 +15,11 @@ spec:
               image: alpine/git
               command:
                 - sh
-                - -x
                 - -c
                 - |
-                  echo "Cron ran at $(date)"
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
-                  git pull
+                  git pull -q
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
