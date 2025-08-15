@@ -20,6 +20,7 @@ spec:
                 - |
                   echo "Cron ran at $(date)"
                   cd /mnt/data/dpsrv/rc
+                  git config --global --add safe.directory /mnt/data/dpsrv/rc
                   git pull
               volumeMounts:
                 - name: data
