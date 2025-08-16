@@ -4,7 +4,7 @@ metadata:
   namespace: dpsrv
   name: rc-refresh
 spec:
-  schedule: "*/1 * * * *"      # every 5 minutes
+  schedule: '*/1 * * * *'      # every 5 minutes
   concurrencyPolicy: Forbid     # prevent overlapping jobs
   jobTemplate:
     spec:
@@ -20,8 +20,9 @@ spec:
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
                   git config --global commit.gpgsign false
-                  git config --global user.email "rc@dpsrv.me"
-                  git config --global user.name "rc"
+                  git config --global user.email 'rc@dpsrv.me'
+                  git config --global user.name 'rc'
+                  git config --global credential.helper 'store --file ~/.git-credentials'
 
                   git pull -q
                   GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
@@ -30,7 +31,6 @@ spec:
                     git commit -a -m updated
                     git push
                   fi
-                  sleep 360
 
               volumeMounts:
                 - name: data
