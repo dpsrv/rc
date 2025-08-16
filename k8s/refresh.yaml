@@ -15,7 +15,6 @@ spec:
               image: maxfortun/private:alpine-tools-1
               command:
                 - sh
-                - -x
                 - -c
                 - |
                   cd /mnt/data/dpsrv/rc
@@ -31,6 +30,8 @@ spec:
                     git commit -a -m updated
                     git push
                   fi
+                  sleep 360
+
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
