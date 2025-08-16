@@ -21,8 +21,8 @@ spec:
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
                   git config --global commit.gpgsign false
-                  git config --global user.email "rc-refresh@dpsrv.me"
-                  git config --global user.name "DPSRV"
+                  git config --global user.email "rc@dpsrv.me"
+                  git config --global user.name "rc"
 
                   git pull -q
                   GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
