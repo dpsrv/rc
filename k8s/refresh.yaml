@@ -20,11 +20,10 @@ spec:
                 - |
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
-                  git config --local commit.gpgsign false
-                  ls -la ~/.git-credentials
-                  cat ~/.git-credentials
-                  ls -la ~/.gitconfig
-                  cat ~/.gitconfig
+                  git config --global commit.gpgsign false
+                  git config --global user.email "rc-refresh@dpsrv.me"
+                  git config --global user.name "DPSRV"
+
                   git pull -q
                   GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
                   if [ -n "$GIT_CHANGES" ]; then
@@ -37,12 +36,15 @@ spec:
                   mountPath: /mnt/data
                 - name: git-credentials
                   mountPath: /root/.git-credentials
+                  subPath: .git-credentials
                   readOnly: true
                 - name: git-openssl-salt
                   mountPath: /root/.config/git/openssl-salt
+                  subPath: openssl-salt
                   readOnly: true
                 - name: git-openssl-password
                   mountPath: /root/.config/git/openssl-password
+                  subPath: openssl-password
                   readOnly: true
 
           restartPolicy: OnFailure
