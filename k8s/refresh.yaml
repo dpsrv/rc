@@ -21,13 +21,17 @@ spec:
                   cd /mnt/data/dpsrv/rc
                   git config --global --add safe.directory /mnt/data/dpsrv/rc
                   git config --local commit.gpgsign false
+                  ls -la ~/.git-credentials
                   cat ~/.git-credentials
+                  ls -la ~/.gitconfig
                   cat ~/.gitconfig
-                  find .secrets -type f
                   git pull -q
-                  git status --porcelain |awk '{ print $2 }'|grep -v '/$' | xargs git add
-                  git commit -a -m updated
-                  git push
+                  GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
+                  if [ -n "$GIT_CHANGES" ]; then
+                    git add $GIT_CHANGES
+                    git commit -a -m updated
+                    git push
+                  fi
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
@@ -42,6 +46,8 @@ spec:
                   readOnly: true
 
           restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: dockerhub-dpsrv
           volumes:
             - name: data
               hostPath:
