@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: dpsrv
+  name: rc-refresh
+spec:
+  schedule: '*/1 * * * *'      # every 5 minutes
+  concurrencyPolicy: Forbid     # prevent overlapping jobs
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: dpsrv-admin
+          containers:
+            - name: pull
+              image: maxfortun/private:alpine-tools-2
+              command:
+                - sh
+                - -c
+                - |
+                  cd /mnt/data/dpsrv/rc
+                  git config --global --add safe.directory /mnt/data/dpsrv/rc
+                  git config --global commit.gpgsign false
+                  git config --global user.email 'rc@dpsrv.me'
+                  git config --global user.name 'rc'
+                  git config --global credential.helper 'store --file ~/.git-credentials'
+
+                  git pull -q
+                  GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
+                  if [ -n "$GIT_CHANGES" ]; then
+                    git add $GIT_CHANGES
+                    git commit -a -m updated
+                    git push
+                  fi
+
+              volumeMounts:
+                - name: data
+                  mountPath: /mnt/data
+                - name: git-credentials
+                  mountPath: /root/.git-credentials
+                  subPath: .git-credentials
+                  readOnly: true
+                - name: git-openssl-salt
+                  mountPath: /root/.config/git/openssl-salt
+                  subPath: openssl-salt
+                  readOnly: true
+                - name: git-openssl-password
+                  mountPath: /root/.config/git/openssl-password
+                  subPath: openssl-password
+                  readOnly: true
+
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: dockerhub-dpsrv
+          volumes:
+            - name: data
+              hostPath:
+                path: /mnt/data
+                type: DirectoryOrCreate
+            - name: git-credentials
+              secret:
+                secretName: git-credentials
+            - name: git-openssl-salt
+              secret:
+                secretName: git-openssl-salt
+            - name: git-openssl-password
+              secret:
+                secretName: git-openssl-password
