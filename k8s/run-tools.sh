@@ -1,3 +1,3 @@
 #!/bin/bash -ex
 
-kubectl run -it --rm --restart=Never dpsrv-tools --serviceaccount=dpsrv-admin --image=maxfortun/private:alpine-tools-2 -- sh
+kubectl -n dpsrv run -it --rm --restart=Never dpsrv-tools --overrides='{ "spec": { "serviceAccountName": "dpsrv-admin" } }' --image=maxfortun/private:alpine-tools-2 -- sh
