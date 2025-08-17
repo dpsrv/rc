@@ -32,6 +32,7 @@ spec:
                     git commit -a -m updated
                     git push
                   fi
+                  sleep 600
 
               volumeMounts:
                 - name: data
