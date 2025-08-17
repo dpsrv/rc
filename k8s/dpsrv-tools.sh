@@ -5,6 +5,8 @@ kubectl -n dpsrv \
 	--image=maxfortun/private:alpine-tools-2 \
 	-it --rm --restart=Never \
 	--overrides='{
-		"spec": { "serviceAccountName": "dpsrv-admin" }
+		"spec": {
+			"serviceAccountName": "dpsrv-admin"
+		}
 	}' \
 	-- sh
