@@ -10,7 +10,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: kubectl-sa
+          serviceAccountName: dpsrv-admin
           containers:
             - name: pull
               image: maxfortun/private:alpine-tools-1
