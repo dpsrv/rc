@@ -13,7 +13,7 @@ spec:
           serviceAccountName: dpsrv-admin
           containers:
             - name: pull
-              image: maxfortun/private:alpine-tools-1
+              image: maxfortun/private:alpine-tools-2
               command:
                 - sh
                 - -c
