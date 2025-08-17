@@ -10,6 +10,7 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: kubectl-sa
           containers:
             - name: pull
               image: maxfortun/private:alpine-tools-1

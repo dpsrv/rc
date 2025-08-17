@@ -16,15 +16,3 @@ subjects:
 - kind: ServiceAccount
   name: kubectl-sa
   namespace: dpsrv
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: kubectl-pod
-spec:
-  serviceAccountName: kubectl-sa
-  containers:
-  - name: kubectl
-    image: bitnami/kubectl:latest
-    command: ["sleep", "infinity"]
-
