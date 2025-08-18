@@ -28,22 +28,13 @@ for secrets in $EXPORT_SECRETS; do
 	find $dir ! -type d | while read file; do
 		secret=${file#/mnt/data/dpsrv/rc/secrets/}
 		secret=${secret//\//-}
-		basename=$(basename $file)
-		k8sValue=$(kubectl -n $ns get secret $secret -o json | jq -r ".data[\"$basename\"]" | base64 -d || true)
-		if [ -z "$k8sValue" ]; then
-			kubectl -n $ns create secret generic $secret --from-file=$file
-		else 
-			fileValue=$(cat $file)
-			if [ "$k8sValue" != "$fileValue" ]; then
-				kubectl -n $ns create secret generic $secret --from-file=$file \
-					--dry-run=client -o yaml | kubectl replace -f -
-			fi
-		fi
+		kubectl -n $ns create secret generic $secret --from-file=$file \
+			--dry-run=client -o yaml | kubectl replace -f -
 	done
 done
 
 kubectl -n istio-system create secret tls domain-credential \
 	--cert=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/fullchain.pem \
 	--key=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/privkey.pem \
-	--dry-run=client -o yaml | kubectl apply -f -
+	--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
 
