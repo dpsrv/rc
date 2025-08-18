@@ -23,8 +23,6 @@ ns=dpsrv
 
 [ -e /etc/letsencrypt ] || ln -s /mnt/data/dpsrv/rc/secrets/letsencrypt /etc/letsencrypt
 
-EXPORT_SECRETS=letsencrypt/live/domain/
-
 for secrets in $EXPORT_SECRETS; do
 	dir=/mnt/data/dpsrv/rc/secrets/$secrets
 	find $dir ! -type d | while read file; do
