@@ -6,3 +6,4 @@ RUN apk add --no-cache openssl git curl bash ca-certificates \
 	&& rm kubectl \
 	&& rm -rf /var/cache/apk/*
 
+COPY files/ /
