@@ -42,3 +42,8 @@ for secrets in $EXPORT_SECRETS; do
 	done
 done
 
+kubectl -n istio-system create secret tls domain-credential \
+	--cert=/path/to/fullchain.pem \
+	--key=/path/to/privkey.pem \
+	--dry-run=client -o yaml | kubectl apply -f -
+
