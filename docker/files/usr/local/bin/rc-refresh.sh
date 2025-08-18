@@ -9,7 +9,6 @@ git config --global credential.helper 'store --file ~/.git-credentials'
 
 git fetch
 fetched=$?
-echo $fetched
 git pull -q
 
 GIT_CHANGES=$(git status --porcelain |awk '{ print $2 }'|grep -v '/$')
