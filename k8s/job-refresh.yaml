@@ -16,7 +16,9 @@ spec:
               image: maxfortun/private:alpine-tools-3
               command:
                 - /usr/local/bin/rc-refresh.sh
-
+              envFrom:
+                - configMapRef:
+                    name: my-config
               volumeMounts:
                 - name: data
                   mountPath: /mnt/data
