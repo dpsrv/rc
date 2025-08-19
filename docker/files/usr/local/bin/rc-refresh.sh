@@ -28,7 +28,7 @@ for secrets in $EXPORT_SECRETS; do
 		secret=${file#/mnt/data/dpsrv/rc/secrets/}
 		secret=${secret//\//-}
 		kubectl -n $ns create secret generic $secret --from-file=$file \
-			--dry-run=client -o yaml | kubectl replace -f - | grep -v unchanged
+			--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
 	done
 done
 
