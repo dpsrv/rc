@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 cd /mnt/data/dpsrv/rc
 git config --global --add safe.directory /mnt/data/dpsrv/rc
