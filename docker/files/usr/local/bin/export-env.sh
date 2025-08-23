@@ -9,8 +9,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	read -r secret_env_ns secret_env_file secret_env_xform <<< "${secret_env_rule}"
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	cat $secret_env_path | while read secret_env; do
-		read -r secret_name secret_value <<< "${secret_env/=/ }"
-		secret_name=$secret_env_path/$secret_name
+	read -r secret_name secret_value <<< "${secret_env/=/ }"
 		[ -z "$secret_env_xform" ] || secret_name=$(echo $secret_name | sed $secret_env_xform)
 		secret_name=$(echo $secret_name | tr A-Z a-z)
 	exit
