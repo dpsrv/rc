@@ -11,7 +11,7 @@ for secret_files_rule in $SECRET_FILES; do
 
         find $SECRET_FILES_DIR/$secret_files_path ! -type d | while read file; do
 		secret_path=$(echo $file | sed "s#$SECRET_FILES_DIR/*##g")
-		secret_name=$(echo $secret_path| sed $secret_files_xform)
+		secret_name=$(echo $secret_path| sed $secret_files_xform | sed 's#/#-#g')
 		echo "$file -> $secret_name"
 		continue
                 secret=${file#/mnt/data/dpsrv/rc/secrets/}
