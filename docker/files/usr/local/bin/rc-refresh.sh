@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd /mnt/data/dpsrv/rc
-git config --global --add safe.directory /mnt/data/*/rc
+git config --global --add safe.directory /mnt/data/dpsrv/rc
 git config --global commit.gpgsign false
 git config --global user.email 'rc@dpsrv.me'
 git config --global user.name 'rc'
