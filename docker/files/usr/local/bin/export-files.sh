@@ -1,3 +1,5 @@
+#!/bin/sh -x
+
 for secrets in $EXPORT_SECRETS; do
         dir=/mnt/data/dpsrv/rc/secrets/$secrets
 
