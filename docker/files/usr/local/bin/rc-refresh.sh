@@ -24,11 +24,11 @@ ns=dpsrv
 
 [ -e /etc/letsencrypt ] || ln -s /mnt/data/dpsrv/rc/secrets/letsencrypt /etc/letsencrypt
 
-$SWD/export-secrets.sh
-$SWD/export-env.sh
-
 kubectl -n istio-system create secret tls domain-credential \
 	--cert=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/fullchain.pem \
 	--key=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/privkey.pem \
 	--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
+
+$SWD/export-files.sh
+$SWD/export-env.sh
 
