@@ -1,8 +1,8 @@
 #!/bin/sh -x
 
 SECRET_FILES=$(cat <<_EOT_
-    dpsrv/rc/secrets/letsencrypt/live/domain/ dpsrv s#^dpsrv/rc/secrets/#dpsrv/#g
-    dpsrv/rc/secrets/mongo/conf/ dpsrv s#^dpsrv/rc/secrets/#dpsrv/#g
+    dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/#dpsrv/#g
+    dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/#dpsrv/#g
 _EOT_
 )
 
