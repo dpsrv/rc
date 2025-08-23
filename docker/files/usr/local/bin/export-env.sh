@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 export SECRET_ENV=$(cat <<_EOT_
-    ezsso ezsso/rc/secrets/dating/.env
+    dpsrv dpsrv/secrets/redis/redis.env 
 _EOT_
 )
 
