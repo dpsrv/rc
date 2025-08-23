@@ -12,9 +12,9 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	read -r secret_name secret_value <<< "${secret_env/=/ }"
 	[ -z "$secret_env_xform" ] || secret_name=$(echo $secret_name | sed $secret_env_xform)
 	secret_name=$(echo $secret_name | tr A-Z a-z)
-	exit
-                kubectl -n $secret_files_ns create secret generic $secret_name --from-file=$file \
-                        --dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
+	kubectl -n $secret_files_ns create secret generic $secret_name --from-file=$file \
+		--dry-run=client -o yaml
+#| kubectl apply -f - | grep -v unchanged
 		exit 
 	done
 done
