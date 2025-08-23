@@ -1,8 +1,14 @@
 #!/bin/sh -x
 
+EXPORT_FILES=$(cat <<_EOT_
+    dpsrv/rc/secrets/letsencrypt/live/domain/=s#^dpsrv/rc/secrets/#dpsrv#g
+    dpsrv/rc/secrets/mongo/conf/=s#^dpsrv/rc/secrets/#dpsrv#g
+_EOT_
+)
+
 for export_file in $EXPORT_FILES; do
 	echo $export_file
-	EXPORT_FILES_DIR
+	#EXPORT_FILES_DIR
 	continue
         dir=/mnt/data/dpsrv/rc/secrets/$secrets
 
