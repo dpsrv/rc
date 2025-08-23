@@ -6,12 +6,9 @@ EXPORT_FILES=$(cat <<_EOT_
 _EOT_
 )
 
-for export_file in $EXPORT_FILES; do
-	read -r file xform <<< "${export_file//=/ }"
-	echo "$file -> $xform"
-	#EXPORT_FILES_DIR
-	continue
-        dir=/mnt/data/dpsrv/rc/secrets/$secrets
+for secret_file_rule in $SECRET_FILES; do
+	read -r export_path export_xform <<< "${secret_file_rule//=/ }"
+        dir=EXPORT_FILES_DIR
 
         find $dir ! -type d | while read file; do
                 secret=${file#/mnt/data/dpsrv/rc/secrets/}
