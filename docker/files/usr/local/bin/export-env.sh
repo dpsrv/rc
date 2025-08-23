@@ -1,4 +1,9 @@
-#!/bin/sh
+#!/bin/sh -x
+
+export SECRET_ENV=$(cat <<_EOT_
+    ezsso ezsso/rc/secrets/dating/.env
+_EOT_
+)
 
 echo "$SECRET_ENV" | while read secret_env_rule; do
 	read -r secret_env_ns secret_env_file secret_env_xform <<< "${secret_env_rule}"
