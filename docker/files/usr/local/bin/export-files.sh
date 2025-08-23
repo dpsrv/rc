@@ -7,7 +7,7 @@ _EOT_
 )
 
 for export_file in $EXPORT_FILES; do
-	echo $export_file
+	echo ${export_file//=/ }
 	#EXPORT_FILES_DIR
 	continue
         dir=/mnt/data/dpsrv/rc/secrets/$secrets
