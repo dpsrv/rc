@@ -10,7 +10,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	cat $secret_env_path | while read secret_env; do
 		read -r secret_name secret_value <<< "${secret_env/=/ }"
-		echo "${secret_env/=/ }"
+		echo "${secret_name} __ $secret_value"
 	done
 	exit
 
