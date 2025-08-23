@@ -1,5 +1,7 @@
 #!/bin/sh
 
+SWD=$(dirname $0)
+
 cd /mnt/data/dpsrv/rc
 git config --global --add safe.directory /mnt/data/dpsrv/rc
 git config --global commit.gpgsign false
@@ -23,7 +25,13 @@ ns=dpsrv
 [ -e /etc/letsencrypt ] || ln -s /mnt/data/dpsrv/rc/secrets/letsencrypt /etc/letsencrypt
 
 for secrets in $EXPORT_SECRETS; do
+
+done
+
+exit 0
+
 	dir=/mnt/data/dpsrv/rc/secrets/$secrets
+
 	find $dir ! -type d | while read file; do
 		secret=${file#/mnt/data/dpsrv/rc/secrets/}
 		secret=${secret//\//-}
