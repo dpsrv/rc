@@ -6,8 +6,8 @@ EXPORT_FILES=$(cat <<_EOT_
 _EOT_
 )
 
-for secret_file_rule in $SECRET_FILES; do
-	read -r secret_path secret_xform <<< "${secret_file_rule//=/ }"
+for secret_files_rule in $SECRET_FILES; do
+	read -r secret_files_path secret_files_xform <<< "${secret_files_rule//=/ }"
         dir=$EXPORT_FILES_DIR
 
         find $dir ! -type d | while read file; do
