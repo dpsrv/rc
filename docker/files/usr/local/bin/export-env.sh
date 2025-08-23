@@ -10,7 +10,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	(
 		#env -i sh --noprofile --norc ". $secret_env_path"
-		sh --noprofile --norc ls
+		env -i sh --noprofile --norc -c env
 	)
 	exit
 
