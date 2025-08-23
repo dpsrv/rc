@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 export SECRET_ENV=$(cat <<_EOT_
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
