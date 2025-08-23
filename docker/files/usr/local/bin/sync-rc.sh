@@ -18,3 +18,12 @@ if [ -n "$GIT_CHANGES" ]; then
 	git push
 fi
 
+ns=dpsrv
+
+[ -e /etc/letsencrypt ] || ln -s /mnt/data/dpsrv/rc/secrets/letsencrypt /etc/letsencrypt
+
+kubectl -n istio-system create secret tls domain-credential \
+	--cert=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/fullchain.pem \
+	--key=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/privkey.pem \
+	--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
+
