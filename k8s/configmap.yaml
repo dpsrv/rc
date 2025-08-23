@@ -5,5 +5,5 @@ metadata:
   name: rc-refresh
 data:
   EXPORT_SECRETS: |
-    dpsrv/letsencrypt/live/domain/
-    dpsrv/mongo/conf/
+    dpsrv/rc/secrets/letsencrypt/live/domain/=s#^dpsrv/rc/secrets/#dpsrv#g
+    dpsrv/mongo/conf/=s#^dpsrv/rc/secrets/#dpsrv#g
