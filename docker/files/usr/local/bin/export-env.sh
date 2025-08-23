@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 export SECRET_ENV=$(cat <<_EOT_
-    dpsrv dpsrv/rc/secrets/redis/redis.env 
+    dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
 _EOT_
 )
 
@@ -10,8 +10,8 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	cat $secret_env_path | while read secret_env; do
 	read -r secret_name secret_value <<< "${secret_env/=/ }"
-		[ -z "$secret_env_xform" ] || secret_name=$(echo $secret_name | sed $secret_env_xform)
-		secret_name=$(echo $secret_name | tr A-Z a-z)
+	[ -z "$secret_env_xform" ] || secret_name=$(echo $secret_name | sed $secret_env_xform)
+	secret_name=$(echo $secret_name | tr A-Z a-z)
 	exit
                 kubectl -n $secret_files_ns create secret generic $secret_name --from-file=$file \
                         --dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
