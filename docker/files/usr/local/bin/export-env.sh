@@ -9,7 +9,8 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 	read -r secret_env_ns secret_env_file secret_env_xform <<< "${secret_env_rule}"
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	(
-		env -i sh --noprofile --norc ". $secret_env_path"
+		#env -i sh --noprofile --norc ". $secret_env_path"
+		sh --noprofile --norc ls
 	)
 	exit
 
