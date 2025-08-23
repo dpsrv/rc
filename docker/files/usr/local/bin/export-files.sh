@@ -1,6 +1,9 @@
 #!/bin/sh -x
 
-for secrets in $EXPORT_SECRETS; do
+for export_file in $EXPORT_FILES; do
+	echo $export_file
+	EXPORT_FILES_DIR
+	continue
         dir=/mnt/data/dpsrv/rc/secrets/$secrets
 
         find $dir ! -type d | while read file; do
