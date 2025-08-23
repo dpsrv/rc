@@ -10,7 +10,7 @@ for secret_files_rule in $SECRET_FILES; do
 	read -r secret_files_path secret_files_xform <<< "${secret_files_rule//=/ }"
 
         find $SECRET_FILES_DIR/$secret_files_path ! -type d | while read file; do
-		echo "$SECRET_FILES_DIR/$file -> $secret_files_xform"
+		echo "$file -> $secret_files_xform"
 		continue
                 secret=${file#/mnt/data/dpsrv/rc/secrets/}
                 secret=${secret//\//-}
