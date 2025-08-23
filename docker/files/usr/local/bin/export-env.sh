@@ -1,7 +1,8 @@
 #!/bin/sh
 
-echo "$SECRET_FILES" | while read secret_files_rule; do
-	read -r secret_files_ns secret_files_path secret_files_xform <<< "${secret_files_rule}"
+echo "$SECRET_ENV" | while read secret_env_rule; do
+	read -r secret_env_ns secret_env_file secret_env_xform <<< "${secret_env_rule}"
+	continue
         find $SECRET_FILES_DIR/$secret_files_path ! -type d | while read file; do
 		secret_path=$(echo $file | sed "s#$SECRET_FILES_DIR/*##g")
 		secret_name=$(echo $secret_path| sed $secret_files_xform | sed 's#/#-#g' | tr A-Z a-z)
