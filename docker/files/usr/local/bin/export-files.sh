@@ -7,7 +7,8 @@ _EOT_
 )
 
 for export_file in $EXPORT_FILES; do
-	echo ${export_file//=/ }
+	read -r file xform <<< "${export_file//=/ }"
+	echo "$file $xform"
 	#EXPORT_FILES_DIR
 	continue
         dir=/mnt/data/dpsrv/rc/secrets/$secrets
