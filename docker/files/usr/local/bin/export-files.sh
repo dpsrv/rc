@@ -12,7 +12,9 @@ echo "$SECRET_FILES" | while read secret_files_rule; do
 		secret_path=$(echo $file | sed "s#$SECRET_FILES_DIR/*##g")
 		secret_name=$(echo $secret_path| sed $secret_files_xform | sed 's#/#-#g' | tr A-Z a-z)
                 kubectl -n $secret_files_ns create secret generic $secret --from-file=$file \
-                        --dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
+                        --dry-run=client -o yaml 
+#| kubectl apply -f - | grep -v unchanged
+		exit 
         done
 done
 
