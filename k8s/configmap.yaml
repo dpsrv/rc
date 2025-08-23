@@ -7,4 +7,4 @@ data:
   EXPORT_SECRETS: |
     dpsrv/rc/secrets/letsencrypt/live/domain/=s#^dpsrv/rc/secrets/#dpsrv#g
     dpsrv/rc/secrets/mongo/conf/=s#^dpsrv/rc/secrets/#dpsrv#g
-    ezsso/mongo/conf/=s#^dpsrv/rc/secrets/#dpsrv#g
+    ezsso/rc/secrets/dating/=s#^ezsso/rc/secrets/#ezsso#g
