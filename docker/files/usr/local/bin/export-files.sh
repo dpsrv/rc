@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 SECRET_FILES=$(cat <<_EOT_
     dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
