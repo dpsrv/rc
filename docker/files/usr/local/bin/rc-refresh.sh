@@ -24,22 +24,8 @@ ns=dpsrv
 
 [ -e /etc/letsencrypt ] || ln -s /mnt/data/dpsrv/rc/secrets/letsencrypt /etc/letsencrypt
 
-for secrets in $EXPORT_SECRETS; do
-
-done
-
-exit 0
-
-	dir=/mnt/data/dpsrv/rc/secrets/$secrets
-
-	find $dir ! -type d | while read file; do
-		secret=${file#/mnt/data/dpsrv/rc/secrets/}
-		secret=${secret//\//-}
-		secret=$(echo $secret|tr A-Z a-z)
-		kubectl -n $ns create secret generic $secret --from-file=$file \
-			--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
-	done
-done
+$SWD/export-secrets.sh
+$SWD/export-env.sh
 
 kubectl -n istio-system create secret tls domain-credential \
 	--cert=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/fullchain.pem \
