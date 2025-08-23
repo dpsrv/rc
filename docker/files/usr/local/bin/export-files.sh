@@ -6,7 +6,7 @@ SECRET_FILES=$(cat <<_EOT_
 _EOT_
 )
 
-for secret_files_rule in $SECRET_FILES; do
+echo $SECRET_FILES | while read secret_files_rule; do
 	echo $secret_files_rule
 	read -r secret_files_ns secret_files_path secret_files_xform <<< "${secret_files_rule}"
 	echo "1: $secret_files_ns 2:$secret_files_path 3:$secret_files_xform"
