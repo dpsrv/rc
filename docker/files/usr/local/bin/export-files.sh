@@ -7,8 +7,8 @@ _EOT_
 )
 
 for secret_file_rule in $SECRET_FILES; do
-	read -r export_path export_xform <<< "${secret_file_rule//=/ }"
-        dir=EXPORT_FILES_DIR
+	read -r secret_path secret_xform <<< "${secret_file_rule//=/ }"
+        dir=$EXPORT_FILES_DIR
 
         find $dir ! -type d | while read file; do
                 secret=${file#/mnt/data/dpsrv/rc/secrets/}
