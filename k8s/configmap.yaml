@@ -10,4 +10,4 @@ data:
     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
-    ezsso ezsso/rc/secrets/dating/.env s#^#ezsso#g
+    ezsso ezsso/rc/secrets/dating/.env
