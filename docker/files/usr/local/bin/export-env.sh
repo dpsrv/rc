@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/sh -x
+
+[ -n "$SECRET_ENV" ] || exit 0
 
 echo "$SECRET_ENV" | while read secret_env_rule; do
 	read -r secret_env_ns secret_env_file secret_env_xform <<< "${secret_env_rule}"
