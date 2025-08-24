@@ -3,5 +3,5 @@
 
 # Run on apply
 ```
-kubectl -n dpsrv create job --from=cronjob/rc-refresh run-once
+kubectl -n dpsrv create job --from=cronjob/rc-refresh rc-refresh
 ```
