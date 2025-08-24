@@ -5,7 +5,7 @@ metadata:
   name: rc-refresh
 spec:
   schedule: '*/5 * * * *'      # every 5 minutes
-  concurrencyPolicy: Forbid     # prevent overlapping jobs
+  concurrencyPolicy: Forbid    # prevent overlapping jobs
   jobTemplate:
     spec:
       template:
