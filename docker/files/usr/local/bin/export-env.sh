@@ -11,6 +11,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 
 	secret_env_path=$SECRET_ENV_DIR/$secret_env_file
 	cat $secret_env_path | while read secret_env; do
+		[ -n "$secret_env_path" ] || continue
 		secret_env_file=/tmp/$(basename $0).$$.secret_env
 		echo "${secret_env/=/ }" > $secret_env_file
 		read -r secret_name secret_value < $secret_env_file

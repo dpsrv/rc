@@ -3,6 +3,8 @@
 [ -n "$SECRET_FILES" ] || exit 0
 
 echo "$SECRET_FILES" | while read secret_files_rule; do
+	[ -n "$secret_files_rule" ] || continue
+
 	secret_files_rule_file=/tmp/$(basename $0).secret_files_rule.$$
 	echo "$secret_files_rule" > $secret_files_rule_file
 	read -r secret_files_ns secret_files_path secret_files_xform < $secret_files_rule_file
