@@ -8,6 +8,7 @@ data:
   SECRET_FILES: |
     dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+    ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
