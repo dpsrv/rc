@@ -34,7 +34,7 @@ spec:
                   mountPath: /root/.config/git/openssl-password
                   subPath: openssl-password
                   readOnly: true
-
+          enableServiceLinks: false
           restartPolicy: OnFailure
           imagePullSecrets:
             - name: dockerhub-dpsrv
