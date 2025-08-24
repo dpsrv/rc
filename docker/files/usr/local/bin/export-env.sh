@@ -16,6 +16,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 		echo "${secret_env/=/ }" > $secret_env_file
 		read -r secret_name secret_value < $secret_env_file
 		rm $secret_env_file
+		[ -n "$secret_value" ] || continue
 
 		[ -z "$secret_env_xform" ] || secret_name=$(echo $secret_name | sed $secret_env_xform)
 		secret_name=$(echo $secret_name | tr A-Z_ a-z-)
