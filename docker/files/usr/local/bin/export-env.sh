@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh -ex
 
 [ -n "$SECRET_ENV" ] || exit 0
 
