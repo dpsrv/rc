@@ -1,5 +1,6 @@
 #!/bin/sh -x
 
+file=$1
 if [ -z "$file" ]; then
 	echo "Usage: $0 <env file>"
 	echo " e.g.: $0 .env.local"
@@ -13,7 +14,7 @@ declare -p > $before
 source $file
 declare -p > $after
 
-diff $before $after
+diff $before $after | grep '^> '
 
 rm $before $after
 
