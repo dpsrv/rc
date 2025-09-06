@@ -1,35 +1,30 @@
-[main ef54db5] updated
- 1 file changed, 69 insertions(+)
-fatal: unable to write credential store: Resource busy
-To https://github.com/dpsrv/rc.git
-   0315729..ef54db5  main -> main
 + '[' -n 'dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
 dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
 ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
 ' ]
-+ read secret_files_rule
 + echo 'dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
 dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
 ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
 '
++ read secret_files_rule
 + '[' -n 'dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g' ]
 + basename /usr/local/bin/export-files.sh
-+ secret_files_rule_file=/tmp/export-files.sh.secret_files_rule.94
++ secret_files_rule_file=/tmp/export-files.sh.secret_files_rule.59
 + echo 'dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g'
 + read -r secret_files_ns secret_files_path secret_files_xform
-+ rm /tmp/export-files.sh.secret_files_rule.94
-+ find /mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/ '!' -type d
-+ read file
++ rm /tmp/export-files.sh.secret_files_rule.59
++ + read filefind
+ /mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/ '!' -type d
 + echo /mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/README
 + sed 's#/mnt/data/*##g'
 + secret_path=dpsrv/rc/secrets/letsencrypt/live/domain/README
 + echo dpsrv/rc/secrets/letsencrypt/live/domain/README
-+ sed 's#^dpsrv/rc/secrets/##g'
-+ sed 's#/#-#g'
++ + sedsed 's#/#-#g' 's#^dpsrv/rc/secrets/##g'
+
 + tr A-Z a-z
 + secret_name=letsencrypt-live-domain-readme
-+ kubectl -n dpsrv create secret generic letsencrypt-live-domain-readme '--from-file=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/README' '--dry-run=client' -o yaml
 + kubectl apply -f -
++ kubectl -n dpsrv create secret generic letsencrypt-live-domain-readme '--from-file=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/README' '--dry-run=client' -o yaml
 + grep -v unchanged
 + '[' -n 'dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
 ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
@@ -39,19 +34,19 @@ ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
 '
 + read secret_env_rule
 + basename /usr/local/bin/export-env.sh
-+ secret_env_rule_file=/tmp/export-env.sh.128.secret_env_rule
++ secret_env_rule_file=/tmp/export-env.sh.94.secret_env_rule
 + echo 'dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g'
 + read -r secret_env_ns secret_env_file secret_env_xform
-+ rm /tmp/export-env.sh.128.secret_env_rule
++ rm /tmp/export-env.sh.94.secret_env_rule
 + secret_env_path=/mnt/data/dpsrv/rc/secrets/redis/redis.env
 + cat /mnt/data/dpsrv/rc/secrets/redis/redis.env
 + read secret_env
 + '[' -n 'RI_REDIS_HOST=dpsrv-redis-latest' ]
 + basename /usr/local/bin/export-env.sh
-+ secret_env_file=/tmp/export-env.sh.128.secret_env
++ secret_env_file=/tmp/export-env.sh.94.secret_env
 + echo 'RI_REDIS_HOST dpsrv-redis-latest'
 + read -r secret_name secret_value
-+ rm /tmp/export-env.sh.128.secret_env
++ rm /tmp/export-env.sh.94.secret_env
 + '[' -n dpsrv-redis-latest ]
 + eval echo dpsrv-redis-latest
 + echo dpsrv-redis-latest
@@ -65,5 +60,5 @@ ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
 + secret_name=redis-ri-redis-host
 + kubectl -n dpsrv create secret generic redis-ri-redis-host '--from-literal=redis-ri-redis-host=dpsrv-redis-latest' '--dry-run=client' -o yaml
 + envsubst
-+ + grepkubectl apply -v -f unchanged -
-
++ grep -v unchanged
++ kubectl apply -f -
