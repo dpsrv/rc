@@ -2,7 +2,7 @@
 
 kubectl -n dpsrv \
 	run dpsrv-tools \
-	--image=maxfortun/private:alpine-tools-2 \
+	--image=maxfortun/private:alpine-tools-3 \
 	-it --rm --restart=Never \
 	--overrides='{
 		"spec": {
