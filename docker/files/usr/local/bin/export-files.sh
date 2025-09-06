@@ -14,14 +14,13 @@ echo "$SECRET_FILES" | while read secret_files_rule; do
 		if [[ "$file" =~ '\.envsubst$' ]]; then
 			rendered=${file%.envsubst}
 			cat $file | envsubst > $rendered
-			mv $rendered $file
+			mv -f $rendered $file
 			file=$rendered
 		fi
 		secret_path=$(echo $file | sed "s#$SECRET_FILES_DIR/*##g")
 		secret_name=$(echo $secret_path| sed $secret_files_xform | sed 's#/#-#g' | tr A-Z a-z)
 		kubectl -n $secret_files_ns create secret generic $secret_name --from-file=$file \
 			--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged || true
-		rm /tmp/$secret_name
 	done
 done
 
