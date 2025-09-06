@@ -23,9 +23,7 @@ echo "$SECRET_ENV" | while read secret_env_rule; do
 		secret_name=$(echo $secret_name | tr A-Z_ a-z-)
 
 		kubectl -n $secret_env_ns create secret generic $secret_name "--from-literal=$secret_name=$secret_value" \
-			--dry-run=client -o yaml | tee /tmp/$secret_name
-		cat /tmp/$secret_name | envsubst | tee /tmp/$secret_name.1
-		cat /tmp/$secret_name.1 | kubectl apply -f - | grep -v unchanged || true
+			--dry-run=client -o yaml | envsubst | kubectl apply -f - | grep -v unchanged || true
 		echo $?
 	done
 done
