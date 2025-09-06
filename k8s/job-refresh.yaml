@@ -15,9 +15,7 @@ spec:
             - name: pull
               image: maxfortun/private:alpine-tools-3
               command:
-                - sleep
-                - infinity
-                #- /usr/local/bin/rc-refresh.sh
+                - /usr/local/bin/rc-refresh.sh
               envFrom:
                 - configMapRef:
                     name: rc-refresh
