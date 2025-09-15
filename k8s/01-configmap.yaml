@@ -12,5 +12,5 @@ data:
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
-    ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
+    dpsrv ezsso/rc/secrets/dating/.env.local s/^/dating-/g
 
