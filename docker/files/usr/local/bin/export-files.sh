@@ -10,7 +10,8 @@ echo "$SECRET_FILES" | while read secret_files_rule; do
 	read -r secret_files_ns secret_files_path secret_files_xform < $secret_files_rule_file
 	rm $secret_files_rule_file
 
-	find $SECRET_FILES_DIR/$secret_files_path ! -type d | while read file; do
+	[ -d $SECRET_FILES_DIR/$secret_files_path ] && find $SECRET_FILES_DIR/$secret_files_path ! -type d || echo $SECRET_FILES_DIR/$secret_files_path | while read file; do
+		[ -e "$file" ] || continue
 		if [[ "$file" =~ '\.envsubst$' ]]; then
 			rendered=${file%.envsubst}
 			cat $file | envsubst > $rendered
