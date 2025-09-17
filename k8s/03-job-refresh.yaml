@@ -11,6 +11,8 @@ spec:
       template:
         spec:
           serviceAccountName: dpsrv-admin
+          nodeSelector:
+            local-registry: 'true'
           containers:
             - name: pull
               image: maxfortun/private:alpine-tools-3
