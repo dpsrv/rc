@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh 
 
 file=$1
 if [ -z "$file" ]; then
