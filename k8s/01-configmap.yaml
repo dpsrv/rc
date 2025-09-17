@@ -10,6 +10,7 @@ data:
     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
+    dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
