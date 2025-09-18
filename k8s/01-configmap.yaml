@@ -11,7 +11,7 @@ data:
     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
-    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^ezsso/rc/secrets/##g
+    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^dpsrv/rc/secrets/##g
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
