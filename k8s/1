@@ -1,0 +1,14 @@
+dating-ezsso-oidc-auth-id
+dating-ezsso-oidc-auth-password
+dating-ezsso-oidc-authorize-uri
+dating-ezsso-oidc-idp-id
+dating-ezsso-oidc-logout-uri
+dating-fb-app-id
+dating-fb-app-secret
+dating-google-client-id
+dating-google-client-secret
+dating-redis-host
+dating-redis-password
+dating-redis-port
+dating-ws-url
+dpsrv-rc-secrets-dating-env-dev
