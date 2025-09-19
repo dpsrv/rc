@@ -13,3 +13,4 @@ data:
     dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
+    dpsrv ezsso/rc/secrets/ws-pubsub/.env.* s#^ezsso/rc/secrets/##g
