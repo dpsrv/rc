@@ -1,14 +1,243 @@
-dating-ezsso-oidc-auth-id
-dating-ezsso-oidc-auth-password
-dating-ezsso-oidc-authorize-uri
-dating-ezsso-oidc-idp-id
-dating-ezsso-oidc-logout-uri
-dating-fb-app-id
-dating-fb-app-secret
-dating-google-client-id
-dating-google-client-secret
-dating-redis-host
-dating-redis-password
-dating-redis-port
-dating-ws-url
-dpsrv-rc-secrets-dating-env-dev
+commit 2249566666f2f427452e1340d4a928ea85086397
+Author: rc <rc@dpsrv.me>
+Date:   Fri Sep 19 15:40:32 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 8c01f17..05543a3 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -13,3 +13,4 @@ data:
+     dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
+     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ws-pubsub/.env.* s#^ezsso/rc/secrets/##g
+
+commit 7ca259e36a7dda549cb5f722961639717dbb2efc
+Author: rc <rc@dpsrv.me>
+Date:   Thu Sep 18 21:35:32 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 94f4fdb..8c01f17 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -11,5 +11,5 @@ data:
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-admin/.env.* s#^ezsso/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
+-    dpsrv dpsrv/rc/secrets/ilevel/.env.* s#^dpsrv/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
+     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
+
+commit dfbc4e90b5635da9337502ba8a545c10c9021738
+Author: rc <rc@dpsrv.me>
+Date:   Thu Sep 18 21:20:26 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 1d21a3f..94f4fdb 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -11,8 +11,5 @@ data:
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-admin/.env.* s#^ezsso/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
++    dpsrv dpsrv/rc/secrets/ilevel/.env.* s#^dpsrv/rc/secrets/##g
+     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
+-  SECRET_ENV_DIR: /mnt/data
+-  SECRET_ENV: |
+-    dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+-
+
+commit e150d55649ac0c01800ba3c667d61f6dedb69237
+Author: rc <rc@dpsrv.me>
+Date:   Thu Sep 18 18:15:30 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 38601fd..1d21a3f 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -9,9 +9,9 @@ data:
+     dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
+     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+-    dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
+-    dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
+-    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^dpsrv/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ezsso-admin/.env.* s#^ezsso/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
++    dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+
+commit 279ea83a2468da70ebd9907dc05ab3ae7d124a43
+Author: Max <max@maxf.net>
+Date:   Thu Sep 18 05:12:21 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index e48e006..38601fd 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -11,7 +11,7 @@ data:
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
+-    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^ezsso/rc/secrets/##g
++    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^dpsrv/rc/secrets/##g
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+
+commit 324070395f2d6b0f5890ccb860a44c38eac7501e
+Author: Max <max@maxf.net>
+Date:   Thu Sep 18 05:07:35 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 13c7f05..e48e006 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -11,8 +11,8 @@ data:
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
++    dpsrv dpsrv/rc/secrets/dating/.env.dev s#^ezsso/rc/secrets/##g
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+-    dpsrv dpsrv/rc/secrets/dating/.env.local s/^/dating-/g
+ 
+
+commit 5c7ed1c6c60b1069afb736373cdef4886f716f62
+Author: Max <max@maxf.net>
+Date:   Wed Sep 17 17:47:50 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 2ec9298..13c7f05 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -10,6 +10,7 @@ data:
+     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ezsso-auth/.env.dev s#^ezsso/rc/secrets/##g
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+
+commit 3bfbfaabdbd2d732f7e6cbe5128c39917ffcd799
+Author: Max <max@maxf.net>
+Date:   Tue Sep 16 19:50:09 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index c0f78c1..2ec9298 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -9,9 +9,9 @@ data:
+     dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
+     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
++    dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s#^ezsso/rc/secrets/##g
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+-    dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s/^/ezsso-admin-dev-/g
+     dpsrv dpsrv/rc/secrets/dating/.env.local s/^/dating-/g
+ 
+
+commit a6aeaa1d88c666b1e9121a7e747cf3007394ca48
+Author: Max <max@maxf.net>
+Date:   Tue Sep 16 19:34:24 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index dc21f51..c0f78c1 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -12,5 +12,6 @@ data:
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
++    dpsrv ezsso/rc/secrets/ezsso-admin/.env.dev s/^/ezsso-admin-dev-/g
+     dpsrv dpsrv/rc/secrets/dating/.env.local s/^/dating-/g
+ 
+
+commit d3ebd1ae7191578836e77e8402e4aa3aacdda5aa
+Author: rc <rc@dpsrv.me>
+Date:   Mon Sep 15 15:07:46 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index 6c9e1c1..dc21f51 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -12,5 +12,5 @@ data:
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+-    dpsrv ezsso/rc/secrets/dating/.env.local s/^/dating-/g
++    dpsrv dpsrv/rc/secrets/dating/.env.local s/^/dating-/g
+ 
+
+commit 18a314e12ce34d19b385e83ac94f3e7d62a0dde3
+Author: Max <max@maxf.net>
+Date:   Mon Sep 15 14:59:37 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+index b59c236..6c9e1c1 100644
+--- a/k8s/01-configmap.yaml
++++ b/k8s/01-configmap.yaml
+@@ -12,5 +12,5 @@ data:
+   SECRET_ENV_DIR: /mnt/data
+   SECRET_ENV: |
+     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+-    ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
++    dpsrv ezsso/rc/secrets/dating/.env.local s/^/dating-/g
+ 
+
+commit 47c85fdbaef4ebf487961fe7f1d079b7b69c4adc
+Author: rc <rc@dpsrv.me>
+Date:   Mon Sep 15 14:35:42 2025 +0000
+
+    updated
+
+diff --git a/k8s/01-configmap.yaml b/k8s/01-configmap.yaml
+new file mode 100644
+index 0000000..b59c236
+--- /dev/null
++++ b/k8s/01-configmap.yaml
+@@ -0,0 +1,16 @@
++apiVersion: v1
++kind: ConfigMap
++metadata:
++  namespace: dpsrv
++  name: rc-refresh
++data:
++  SECRET_FILES_DIR: /mnt/data
++  SECRET_FILES: |
++    dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
++    dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
++    ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
++  SECRET_ENV_DIR: /mnt/data
++  SECRET_ENV: |
++    dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
++    ezsso ezsso/rc/secrets/dating/.env.local s/^/dating-/g
++

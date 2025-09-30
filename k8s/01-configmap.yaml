@@ -14,3 +14,7 @@ data:
     dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ws-pubsub/.env.* s#^ezsso/rc/secrets/##g
+  SECRET_ENV_DIR: /mnt/data
+  SECRET_ENV: |
+    dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+
