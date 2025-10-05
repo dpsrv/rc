@@ -9,6 +9,7 @@ data:
     dpsrv dpsrv/rc/secrets/letsencrypt/live/domain/ s#^dpsrv/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
     ezsso dpsrv/rc/secrets/mongo/conf/ s#^dpsrv/rc/secrets/##g
+    dpsrv dpsrv/rc/secrets/elasticsearch/ s#^dpsrv/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ezsso-admin/.env.* s#^ezsso/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ezsso-auth/.env.* s#^ezsso/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
