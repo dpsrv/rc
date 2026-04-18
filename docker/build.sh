@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
 SWD=$(dirname $0)
+cd $SWD
 
-image=$(yq 'select(.metadata.name == "rc-refresh")  | .spec.jobTemplate.spec.template.spec.containers[] | select(.name == "pull") |  .image' $SWD/../k8s/03-job-refresh.yaml)
+image=$(yq 'select(.metadata.name == "rc-refresh")  | .spec.jobTemplate.spec.template.spec.containers[] | select(.name == "pull") |  .image' ../k8s/03-job-refresh.yaml)
 
 docker build -t $image .
 
