@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -x
 
 [ -n "$SECRET_FILES" ] || exit 0
 
@@ -22,5 +22,4 @@ echo "$SECRET_FILES" | while read secret_files_rule; do
 		kubectl -n $secret_files_ns create secret generic $secret_name --from-file=$file \
 			--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged || true
 	done
-done || true
-
+done
