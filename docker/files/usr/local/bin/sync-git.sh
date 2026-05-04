@@ -25,5 +25,5 @@ ns=dpsrv
 kubectl -n istio-system create secret tls domain-credential \
 	--cert=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/fullchain.pem \
 	--key=/mnt/data/dpsrv/rc/secrets/letsencrypt/live/domain/privkey.pem \
-	--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged
+	--dry-run=client -o yaml | kubectl apply -f - | grep -v unchanged || true
 
