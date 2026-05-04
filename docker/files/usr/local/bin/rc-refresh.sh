@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -ex
 
 SWD=$(dirname $0)
 
