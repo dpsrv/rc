@@ -15,7 +15,7 @@ spec:
             local-registry: 'true'
           containers:
             - name: pull
-              image: maxfortun/private:alpine-tools-4
+              image: maxfortun/private:alpine-tools-3
               command:
                 - /usr/local/bin/rc-refresh.sh
               envFrom:
