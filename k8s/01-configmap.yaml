@@ -21,4 +21,5 @@ data:
   SECRET_ENV_DIR: /mnt/data
   SECRET_ENV: |
     dpsrv dpsrv/rc/secrets/redis/redis.env s/^/redis-/g
+    dpsrv dpsrv/rc/secrets/neo4j/neo4j.env s/^/neo4j-/g
 
