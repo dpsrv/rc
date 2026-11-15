@@ -15,6 +15,7 @@ data:
     dpsrv ezsso/rc/secrets/ilevel/.env.* s#^ezsso/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/dating/.env.* s#^dpsrv/rc/secrets/##g
     dpsrv ezsso/rc/secrets/ws-pubsub/.env.* s#^ezsso/rc/secrets/##g
+    dpsrv ezsso/rc/secrets/ws-pubsub-admin/.env.* s#^ezsso/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/qwt/.env.* s#^dpsrv/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/mailserver/conf/ s#^dpsrv/rc/secrets/##g
     dpsrv dpsrv/rc/secrets/snappymail/ s#^dpsrv/rc/secrets/##g
